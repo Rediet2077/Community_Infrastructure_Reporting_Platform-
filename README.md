@@ -556,22 +556,7 @@ The ultimate goal of CIRP is to create a more **transparent, accessible, intelli
 
 ---
 
-## 📄 Documentation
 
-Additional project documentation can be found in:
-
-```text
-docs/
-├── SRS/
-├── architecture/
-├── api/
-├── database/
-├── ai/
-├── UI/
-└── testing/
-```
-
----
 
 ## ⭐ CIRP
 

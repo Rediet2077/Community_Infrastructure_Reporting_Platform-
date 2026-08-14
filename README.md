@@ -215,11 +215,7 @@ Heat maps show areas where infrastructure problems are highly concentrated.
 
 Example:
 
-```text
-High concentration    Red
-Medium concentration  Yellow
-Low concentration     Green
-```
+
 
 Heat maps can help municipalities identify infrastructure problem hotspots and prioritize resources.
 
@@ -509,7 +505,7 @@ The ultimate goal of CIRP is to create a more **transparent, accessible, intelli
 
 ---
 
-
+--- 
 Development Team
 
 8-Member Development Team
@@ -520,5 +516,4 @@ Naol, Nahom	Frontend	2	React, Tailwind CSS, Municipality Web
 Rediet, Meron	Mobile	2	Flutter, Citizen Mobile App
 Rediet Sharew	AI/ML	1	Image Classification, Duplicate Detection
 
-
-
+---

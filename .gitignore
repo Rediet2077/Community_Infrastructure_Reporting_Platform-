@@ -1,0 +1,48 @@
+# ── AI datasets — images are too large for GitHub ─────────
+# Keep folder structure but exclude all images
+ai/image_classification/dataset/train/
+ai/image_classification/dataset/validation/
+ai/image_classification/dataset/test/
+ai/image_classification/datasets/raw/
+ai/duplicate_detection/datasets/raw/
+ai/duplicate_detection/dataset/
+
+# ── Trained model weights ─────────────────────────────────
+ai/image_classification/models/saved/*.pth
+ai/image_classification/models/saved/*.pt
+ai/image_classification/models/saved/*.h5
+ai/duplicate_detection/models/saved/
+
+# ── Python ────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+venv/
+*.log
+
+# ── Node / React ──────────────────────────────────────────
+node_modules/
+dist/
+build/
+.env.local
+
+# ── Flutter ───────────────────────────────────────────────
+mobile/.dart_tool/
+mobile/build/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+
+# ── IDE ───────────────────────────────────────────────────
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# ── Secrets ───────────────────────────────────────────────
+*.env
+!*.env.example
+secrets.json
+*.pem
+*.key

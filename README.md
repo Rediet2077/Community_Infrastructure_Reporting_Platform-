@@ -454,18 +454,6 @@ Sensitive information such as passwords, secret keys, and database credentials m
 
 ---
 
-# Branches
-
-```text
-feature/backend-auth
-feature/backend-reports
-feature/frontend-dashboard
-feature/frontend-gis
-feature/mobile-report
-feature/mobile-map
-ai-tasker
-```
-
 ---
 
 # Expected Benefits
@@ -521,23 +509,6 @@ The ultimate goal of CIRP is to create a more **transparent, accessible, intelli
 
 ---
 
-# Project Status
-
-**Development Status:** In Development
-
-**Project Type:** University Software Engineering Project
-
-**Architecture:** Web + Mobile + AI + GIS
-
-**Platforms:**
-
-* Flutter Mobile
-* React Web
-* Django REST API
-* AI/ML Services
-* GIS
-
----
 
 Development Team
 
@@ -549,8 +520,5 @@ Naol, Nahom	Frontend	2	React, Tailwind CSS, Municipality Web
 Rediet, Meron	Mobile	2	Flutter, Citizen Mobile App
 Rediet Sharew	AI/ML	1	Image Classification, Duplicate Detection
 
-# CIRP
 
-**Report. Analyze. Assign. Resolve.**
 
-> **Building a smarter connection between communities and public infrastructure services.**

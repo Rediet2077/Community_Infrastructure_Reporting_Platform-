@@ -435,13 +435,13 @@ Sensitive information such as passwords, secret keys, and database credentials m
 
 ## 8-Member Development Team
 
-| Name(s)                   | Team        | Members | Responsibility                            |
-| ------------------------- | ----------- | ------: | ----------------------------------------- |
-| **Migbaru, Musse, Meron** | Backend     |       3 | Django, REST API, PostgreSQL/PostGIS      |
-| **Naol, Nahom**           | Frontend    |       2 | React, Tailwind CSS, Municipality Web     |
-| **Rediet, Meron**         | Mobile      |       2 | Flutter, Citizen Mobile App               |
-| **Rediet Sharew**         | AI/ML       |       1 | Image Classification, Duplicate Detection |
-| **Total**                 | **4 Teams** |   **8** | **Web, Mobile, Backend, AI/ML**           |
+| Name(s)                      | Team        | Members | Responsibility                            |
+| -------------------------    | ----------- | ------: | ----------------------------------------- |
+| **Migbaru, Mussie, Meron**   | Backend     |       3 | Django, REST API, PostgreSQL/PostGIS      |
+| **Naol, Nahom Kasa**         | Frontend    |       2 | React, Tailwind CSS, Municipality Web     |
+| **Rediet Asfer, Meron**      | Mobile      |       2 | Flutter, Citizen Mobile App               |
+| **Rediet Sharew**            | AI/ML       |       1 | Image Classification, Duplicate Detection |
+| **Total**                    | **4 Teams** |   **8** | **Web, Mobile, Backend, AI/ML**           |
 
 ---
 

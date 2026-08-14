@@ -1,10 +1,10 @@
-# 🏙️ Community Infrastructure Reporting Platform (CIRP)
+# Community Infrastructure Reporting Platform (CIRP)
 
 > **A smart web and mobile platform for reporting, managing, analyzing, and resolving community infrastructure problems.**
 
 ---
 
-## 📌 Introduction
+## Introduction
 
 The **Community Infrastructure Reporting Platform (CIRP)** is a smart web and mobile-based system designed to improve how citizens report public infrastructure problems and how municipalities manage and resolve them.
 
@@ -16,10 +16,10 @@ CIRP also integrates **Artificial Intelligence (AI)** and **Geographic Informati
 
 The system includes four major smart capabilities:
 
-* 🤖 **AI Duplicate Report Detection**
-* 🖼️ **AI Image-Based Infrastructure Classification**
-* 🗺️ **GIS Maps and Heat Maps**
-* 🌍 **Multilingual Support: English, Amharic, Afaan Oromo, and Tigrinya**
+* **AI Duplicate Report Detection**
+* **AI Image-Based Infrastructure Classification**
+* **GIS Maps and Heat Maps**
+* **Multilingual Support: English, Amharic, Afaan Oromo, and Tigrinya**
 
 The overall workflow is:
 
@@ -51,7 +51,7 @@ Citizen Notification
 
 ---
 
-# 🚨 Statement of the Problem
+# Statement of the Problem
 
 Public infrastructure problems such as potholes, damaged roads, water leakage, blocked drainage systems, garbage accumulation, and broken streetlights directly affect community safety and quality of life.
 
@@ -80,7 +80,7 @@ CIRP addresses these problems by providing a centralized digital platform that c
 
 ---
 
-# 🎯 Objectives (Solutions)
+# Objectives (Solutions)
 
 ## General Objective
 
@@ -107,9 +107,9 @@ CIRP aims to:
 
 ---
 
-# ✨ Key Features
+# Key Features
 
-## 👤 Citizen Mobile Application
+## Citizen Mobile Application
 
 Citizens can:
 
@@ -128,7 +128,7 @@ Citizens can:
 
 ---
 
-## 🤖 AI Duplicate Detection
+## AI Duplicate Detection
 
 CIRP uses AI to identify reports that may describe the same infrastructure problem.
 
@@ -165,7 +165,7 @@ The final decision to merge reports remains with the municipality officer.
 
 ---
 
-## 🖼️ AI Image Classification
+## AI Image Classification
 
 When a citizen uploads an infrastructure image, the AI model analyzes it and suggests a category.
 
@@ -195,7 +195,7 @@ The prediction is a recommendation and can be corrected by the user or officer.
 
 ---
 
-## 🗺️ GIS Maps
+## GIS Maps
 
 CIRP uses GIS to display infrastructure reports geographically.
 
@@ -209,28 +209,28 @@ The municipality can:
 
 ---
 
-## 🔥 GIS Heat Maps
+## GIS Heat Maps
 
 Heat maps show areas where infrastructure problems are highly concentrated.
 
 Example:
 
 ```text
-High concentration    🔴
-Medium concentration  🟡
-Low concentration     🟢
+High concentration    Red
+Medium concentration  Yellow
+Low concentration     Green
 ```
 
 Heat maps can help municipalities identify infrastructure problem hotspots and prioritize resources.
 
 ---
 
-## 🌍 Multilingual Support
+## Multilingual Support
 
 CIRP supports:
 
-* 🇬🇧 English
-* 🇪🇹 Amharic
+* English
+* Amharic
 * Afaan Oromo
 * Tigrinya
 
@@ -246,7 +246,7 @@ Language support applies to:
 
 ---
 
-## 📊 Dashboard and Analytics
+## Dashboard and Analytics
 
 Municipality officers can monitor:
 
@@ -264,7 +264,7 @@ Municipality officers can monitor:
 
 ---
 
-## 🔔 Notifications
+## Notifications
 
 Users can receive notifications when:
 
@@ -279,20 +279,20 @@ Users can receive notifications when:
 
 ---
 
-# 👥 Actors
+# Actors
 
 CIRP contains four primary actors.
 
-| Actor                   | Main Responsibilities                                             |
-| ----------------------- | ----------------------------------------------------------------- |
-| 👤 Citizen              | Report problems, track reports, receive notifications             |
-| 🏢 Municipality Officer | Verify reports, assign tasks, monitor and resolve problems        |
-| 👷 Contractor           | Perform assigned maintenance and update progress                  |
-| 🔐 Administrator        | Manage users, roles, departments, categories, and system settings |
+| Actor                | Main Responsibilities                                             |
+| -------------------- | ----------------------------------------------------------------- |
+| Citizen              | Report problems, track reports, receive notifications             |
+| Municipality Officer | Verify reports, assign tasks, monitor and resolve problems        |
+| Contractor           | Perform assigned maintenance and update progress                  |
+| Administrator        | Manage users, roles, departments, categories, and system settings |
 
 ---
 
-## 👤 Citizen
+## Citizen
 
 The citizen interacts primarily with the Flutter mobile application.
 
@@ -319,7 +319,7 @@ Receive Notification
 
 ---
 
-## 🏢 Municipality Officer
+## Municipality Officer
 
 The officer uses the React web application to:
 
@@ -337,7 +337,7 @@ The officer uses the React web application to:
 
 ---
 
-## 👷 Contractor
+## Contractor
 
 The contractor can:
 
@@ -350,7 +350,7 @@ The contractor can:
 
 ---
 
-## 🔐 Administrator
+## Administrator
 
 The administrator manages:
 
@@ -363,11 +363,7 @@ The administrator manages:
 
 ---
 
-
-
-
-
-# ⭐ Unique Features
+# Unique Features
 
 ## 1. AI-Powered Duplicate Detection
 
@@ -439,7 +435,7 @@ GIS and analytics allow municipality authorities to identify:
 
 ---
 
-# 🔐 Security
+# Security
 
 CIRP will implement:
 
@@ -458,7 +454,7 @@ Sensitive information such as passwords, secret keys, and database credentials m
 
 ---
 
-branches:
+# Branches
 
 ```text
 feature/backend-auth
@@ -472,7 +468,7 @@ ai-tasker
 
 ---
 
-# 📈 Expected Benefits
+# Expected Benefits
 
 ### Citizens
 
@@ -504,7 +500,7 @@ ai-tasker
 
 ---
 
-# 🏁 Conclusion
+# Conclusion
 
 The **Community Infrastructure Reporting Platform (CIRP)** provides a centralized and intelligent solution for managing community infrastructure problems.
 
@@ -514,10 +510,10 @@ The combination of **Flutter, React, Django, PostgreSQL/PostGIS, AI, and GIS tec
 
 The four major innovations of CIRP are:
 
-> 🤖 **AI Duplicate Detection**
-> 🖼️ **AI Image Classification**
-> 🗺️ **GIS Heat Maps**
-> 🌍 **English, Amharic, Afaan Oromo & Tigrinya Support**
+> **AI Duplicate Detection**
+> **AI Image Classification**
+> **GIS Heat Maps**
+> **English, Amharic, Afaan Oromo & Tigrinya Support**
 
 Through these capabilities, CIRP can reduce duplicate reports, simplify infrastructure classification, identify geographic problem hotspots, improve communication, and provide municipalities with better information for decision-making.
 
@@ -525,9 +521,9 @@ The ultimate goal of CIRP is to create a more **transparent, accessible, intelli
 
 ---
 
-## 📌 Project Status
+# Project Status
 
-**Development Status:** 🚧 In Development
+**Development Status:** In Development
 
 **Project Type:** University Software Engineering Project
 
@@ -535,30 +531,25 @@ The ultimate goal of CIRP is to create a more **transparent, accessible, intelli
 
 **Platforms:**
 
-* 📱 Flutter Mobile
-* 🖥️ React Web
-* ☁️ Django REST API
-* 🤖 AI/ML Services
-* 🗺️ GIS
+* Flutter Mobile
+* React Web
+* Django REST API
+* AI/ML Services
+* GIS
 
 ---
 
-## 👨‍💻 Development Team
+Development Team
 
-**8-Member Development Team**
+8-Member Development Team
 
-| Team     | Members | Responsibility                            |
-| -------- | ------: | ----------------------------------------- |
-| Backend  |       2 | Django, REST API, PostgreSQL/PostGIS      |
-| Frontend |       2 | React, Tailwind CSS, Municipality Web     |
-| Mobile   |       2 | Flutter, Citizen Mobile App               |
-| AI/ML    |       2 | Image Classification, Duplicate Detection |
+Name(s)	Team	Members	Responsibility
+Migbaru, Musse, Meron	Backend	3	Django, REST API, PostgreSQL/PostGIS
+Naol, Nahom	Frontend	2	React, Tailwind CSS, Municipality Web
+Rediet, Meron	Mobile	2	Flutter, Citizen Mobile App
+Rediet Sharew	AI/ML	1	Image Classification, Duplicate Detection
 
----
-
-
-
-## ⭐ CIRP
+# CIRP
 
 **Report. Analyze. Assign. Resolve.**
 

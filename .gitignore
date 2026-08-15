@@ -1,3 +1,8 @@
+# ── Python virtual environment ────────────────────────────
+venv/
+.venv/
+env/
+
 # ── AI datasets — images are too large for GitHub ─────────
 # Keep folder structure but exclude all images
 ai/image_classification/dataset/train/

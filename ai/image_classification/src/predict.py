@@ -16,6 +16,52 @@ from model import load_model
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Load model once when the module is imported (not on every request)
+_model       = None
+_class_names = None
+
+
+def _get_model():
+    """Load model once and reuse it for all requests."""
+    global _model, _class_names
+    if _model is None:
+        _model, _class_names = load_model()
+        _model = _model.to(DEVICE)
+    return _model, _class_names
+
+
+def predict_image_from_pil(image: "PIL.Image.Image") -> dict:
+    """
+    Takes a PIL Image object and returns prediction.
+    Used by the FastAPI router (no file path needed).
+
+    This is faster than predict_image() because it
+    does not reload the model on every request.
+    """
+    model, class_names = _get_model()
+    model.eval()
+
+    image_tensor = val_test_transform(image).unsqueeze(0).to(DEVICE)
+
+    with torch.no_grad():
+        output = model(image_tensor)
+        probs  = F.softmax(output, dim=1)[0]
+
+    best_idx   = probs.argmax().item()
+    category   = class_names[best_idx]
+    confidence = probs[best_idx].item()
+
+    all_scores = {
+        class_names[i]: round(probs[i].item(), 4)
+        for i in range(len(class_names))
+    }
+
+    return {
+        "category":   category,
+        "confidence": round(confidence, 4),
+        "all_scores": all_scores,
+    }
+
 
 def predict_image(image_path: str):
     """

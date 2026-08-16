@@ -2,3 +2,44 @@
 # CIRP — Community Infrastructure Reporting Platform
 # .gitignore — root (covers backend, frontend, mobile, ai)
 # ============================================================
+# Byte-compiled / Python artifacts (matches any subfolder)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (inside root, backend/, or core/)
+venv/
+.venv/
+env/
+
+# Environment files & secrets
+.env
+.env.*
+.env.local
+!.env.example
+
+# Django database & SQLite artifacts
+*.sqlite3
+*.sqlite3-journal
+db.sqlite3
+
+# Django logs & local overrides
+*.log
+local_settings.py
+
+# User uploads & collected static files
+media/
+staticfiles/
+static_root/
+
+# Test & coverage outputs
+htmlcov/
+.coverage
+.coverage.*
+.pytest_cache/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -73,7 +73,7 @@ INSTALLED_APPS = [
     'apps.disputes',
     'apps.tasks',
     'apps.audit',
-    'apps.media',
+    'apps.medias',
 ]
 
 MIDDLEWARE = [

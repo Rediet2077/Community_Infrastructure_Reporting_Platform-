@@ -38,8 +38,14 @@ if os.name == 'nt':
         os.environ['PATH'] = venv_osgeo + ';' + os.environ['PATH']
         os.environ['GDAL_DATA'] = os.path.join(venv_osgeo, 'data', 'gdal')
         os.environ['PROJ_LIB'] = os.path.join(venv_osgeo, 'data', 'proj')
-        GDAL_LIBRARY_PATH = os.path.join(venv_osgeo, 'gdal.dll')
-        GEOS_LIBRARY_PATH = os.path.join(venv_osgeo, 'geos_c.dll')
+        
+        osgeo_path = Path(venv_osgeo)
+        gdal_dll = osgeo_path / 'gdal.dll' if (osgeo_path / 'gdal.dll').exists() else next(osgeo_path.glob('gdal*.dll'), None)
+        geos_dll = osgeo_path / 'geos_c.dll' if (osgeo_path / 'geos_c.dll').exists() else next(osgeo_path.glob('geos_c*.dll'), None)
+        if gdal_dll:
+            GDAL_LIBRARY_PATH = str(gdal_dll)
+        if geos_dll:
+            GEOS_LIBRARY_PATH = str(geos_dll)
 
 # -----------------------------------------------------------------------------
 # Core Security & App Configuration

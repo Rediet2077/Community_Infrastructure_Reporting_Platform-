@@ -29,6 +29,7 @@ from api.routes.classify     import router as classify_router
 from api.routes.duplicate    import router as duplicate_router
 from api.routes.multilingual import router as multilingual_router
 from api.routes.quality      import router as quality_router
+from api.routes.auto_fill    import router as auto_fill_router
 
 # ── Create app ─────────────────────────────────────────────
 app = FastAPI(
@@ -65,6 +66,7 @@ app.include_router(classify_router,     prefix="/ai")
 app.include_router(duplicate_router,    prefix="/ai")
 app.include_router(multilingual_router, prefix="/ai")
 app.include_router(quality_router,      prefix="/ai")
+app.include_router(auto_fill_router,    prefix="/ai")
 
 
 # ── Root endpoint ──────────────────────────────────────────
@@ -80,6 +82,7 @@ async def root():
             "compare_multilingual": "POST /ai/compare-multilingual/",
             "detect_language":      "POST /ai/detect-language/",
             "check_quality":        "POST /ai/check-quality/",
+            "auto_fill":            "POST /ai/auto-fill/",
             "health":               "GET  /ai/health/",
             "docs":                 "GET  /docs",
         },

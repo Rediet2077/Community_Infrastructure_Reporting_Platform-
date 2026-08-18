@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env')
+# BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
+# arr = BASE_DIR.split("\\")
+# BASE_DIR = "/".join(arr)+"/"+".env"
+# load_dotenv(BASE_DIR)
 
 # -----------------------------------------------------------------------------
 # GeoDjango Windows Configuration (GDAL / GEOS)
@@ -113,7 +117,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
-        conn_max_age=0,  # Recommended 0 for serverless pooler endpoints
+        conn_max_age=600,  # Recommended 0 for serverless pooler endpoints
         conn_health_checks=True,
         engine='django.contrib.gis.db.backends.postgis'
     )

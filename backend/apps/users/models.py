@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from utils.enums import UserRole
+
 
 class UserManager(BaseUserManager):
     """
@@ -12,14 +14,14 @@ class UserManager(BaseUserManager):
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
         user = self.model(email=email, phone_number=phone_number, **extra_fields)
-        user.set_password(password) # Hashes the password securely
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
     def create_superuser(self, email, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('role', 'SYSTEM_ADMIN')
+        extra_fields.setdefault('role', UserRole.SYSTEM_ADMIN)
         return self.create_user(email, phone_number, password, **extra_fields)
 
 
@@ -27,19 +29,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
     Core User model matching the CIRP database schema.
     """
-    class Role(models.TextChoices):
-        CITIZEN = 'CITIZEN', 'Citizen'
-        DEPARTMENT_ADMIN = 'DEPARTMENT_ADMIN', 'Department Admin'
-        SYSTEM_ADMIN = 'SYSTEM_ADMIN', 'System Admin'
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=30, unique=True)
     email = models.EmailField(max_length=255, unique=True)
     
-    # role ENUM
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.CITIZEN)
+    # Role ENUM from shared utils
+    role = models.CharField(
+        max_length=20, 
+        choices=UserRole.choices, 
+        default=UserRole.CITIZEN
+    )
     
     preferred_language = models.CharField(max_length=20, default='en-us')
     profile_image_url = models.TextField(null=True, blank=True)
@@ -50,7 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    # Required by Django Admin/PermissionsMixin
+    # Required by Django Admin / PermissionsMixin
     is_staff = models.BooleanField(default=False) 
 
     USERNAME_FIELD = 'email'

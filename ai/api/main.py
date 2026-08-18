@@ -28,6 +28,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routes.classify     import router as classify_router
 from api.routes.duplicate    import router as duplicate_router
 from api.routes.multilingual import router as multilingual_router
+from api.routes.quality      import router as quality_router
 
 # ── Create app ─────────────────────────────────────────────
 app = FastAPI(
@@ -63,6 +64,7 @@ app.add_middleware(
 app.include_router(classify_router,     prefix="/ai")
 app.include_router(duplicate_router,    prefix="/ai")
 app.include_router(multilingual_router, prefix="/ai")
+app.include_router(quality_router,      prefix="/ai")
 
 
 # ── Root endpoint ──────────────────────────────────────────
@@ -77,6 +79,7 @@ async def root():
             "detect_duplicate":     "POST /ai/detect-duplicate/",
             "compare_multilingual": "POST /ai/compare-multilingual/",
             "detect_language":      "POST /ai/detect-language/",
+            "check_quality":        "POST /ai/check-quality/",
             "health":               "GET  /ai/health/",
             "docs":                 "GET  /docs",
         },

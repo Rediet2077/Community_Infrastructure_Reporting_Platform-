@@ -25,8 +25,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "duplicate_detec
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.routes.classify  import router as classify_router
-from api.routes.duplicate import router as duplicate_router
+from api.routes.classify     import router as classify_router
+from api.routes.duplicate    import router as duplicate_router
+from api.routes.multilingual import router as multilingual_router
 
 # ── Create app ─────────────────────────────────────────────
 app = FastAPI(
@@ -59,8 +60,9 @@ app.add_middleware(
 )
 
 # ── Register both routers under /ai prefix ─────────────────
-app.include_router(classify_router,  prefix="/ai")
-app.include_router(duplicate_router, prefix="/ai")
+app.include_router(classify_router,     prefix="/ai")
+app.include_router(duplicate_router,    prefix="/ai")
+app.include_router(multilingual_router, prefix="/ai")
 
 
 # ── Root endpoint ──────────────────────────────────────────
@@ -71,9 +73,11 @@ async def root():
         "version": "1.0.0",
         "status":  "running",
         "endpoints": {
-            "classify_image":    "POST /ai/classify-image/",
-            "detect_duplicate":  "POST /ai/detect-duplicate/",
-            "health":            "GET  /ai/health/",
-            "docs":              "GET  /docs",
+            "classify_image":       "POST /ai/classify-image/",
+            "detect_duplicate":     "POST /ai/detect-duplicate/",
+            "compare_multilingual": "POST /ai/compare-multilingual/",
+            "detect_language":      "POST /ai/detect-language/",
+            "health":               "GET  /ai/health/",
+            "docs":                 "GET  /docs",
         },
     }

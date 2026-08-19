@@ -2,9 +2,13 @@ from rest_framework import serializers
 from .models import Dispute
 
 class DisputeSerializer(serializers.ModelSerializer):
-    submitted_by_name = serializers.ReadOnlyField(source='submitted_by.get_full_name')
+    submitted_by_email = serializers.ReadOnlyField(source='submitted_by.email')
 
     class Meta:
         model = Dispute
-        fields = '__all__'
-        read_only_fields = ('status', 'reviewed_by', 'review_note', 'reviewed_at')
+        fields = [
+            'id', 'report', 'submitted_by', 'submitted_by_email',
+            'reason', 'status', 'reviewed_by', 'review_note',
+            'created_at', 'reviewed_at'
+        ]
+        read_only_fields = ['id', 'status', 'reviewed_by', 'review_note', 'created_at', 'reviewed_at']

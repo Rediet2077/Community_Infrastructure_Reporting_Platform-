@@ -7,5 +7,10 @@ class CollaborationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Collaboration
-        fields = '__all__'
-        read_only_fields = ('status', 'response_note')
+        fields = [
+            'id', 'report', 'primary_department', 'primary_department_name',
+            'supporting_department', 'supporting_department_name',
+            'requested_by', 'reason', 'status', 'response_note',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'status', 'response_note', 'created_at', 'updated_at']

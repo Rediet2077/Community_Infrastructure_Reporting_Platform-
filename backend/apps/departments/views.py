@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from rest_framework import viewsets, permissions
+from .models import Department
+from .serializers import DepartmentSerializer
+from common.permissions import IsDepartmentAdmin
 
-# Create your views here.
+class DepartmentViewSet(viewsets.ModelViewSet):
+    queryset = Department.objects.filter(is_active=True)
+    serializer_class = DepartmentSerializer
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            return [permissions.IsAuthenticated(), IsDepartmentAdmin()]
+        return [permissions.IsAuthenticated()]

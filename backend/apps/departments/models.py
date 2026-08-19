@@ -11,8 +11,10 @@ class Department(models.Model):
     # admin_user_id UUID FK -> users.id UNIQUE[cite: 1]
     admin_user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.PROTECT, 
-        related_name='managed_department'
+        on_delete=models.SET_NULL,
+        related_name='managed_department',
+        null=True,
+        blank=True,
     )
     
     name = models.CharField(max_length=150, unique=True)

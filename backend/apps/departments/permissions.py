@@ -1,30 +1,37 @@
 from rest_framework import permissions
 
+
 class IsDepartmentAdmin(permissions.BasePermission):
     """
-    Allows access only to users with the DEPARTMENT_ADMIN role.
+    Allows write/manage access to users with administrative roles.
     """
     def has_permission(self, request, view):
-        return (
-            request.user and 
-            request.user.is_authenticated and 
-            request.user.role == 'DEPARTMENT_ADMIN'
-        )
+        if not (request.user and request.user.is_authenticated):
+            return False
+
+        user_role = getattr(request.user, 'role', None)
+        # Check both role variations and staff status
+        return request.user.is_staff or user_role in ['SYSTEM_ADMIN', 'ADMIN', 'DEPARTMENT_ADMIN', 'DEPARTMENT_MANAGER']
+
 
 class IsTaskDepartmentAdmin(permissions.BasePermission):
     """
-    Ensures that a department admin can only manage tasks assigned to their own department.
+    Ensures a department admin can only manage tasks assigned to their department.
     """
     def has_object_permission(self, request, view, obj):
         if not (request.user and request.user.is_authenticated):
             return False
-        
-        # System admins can access everything
-        if request.user.role == 'SYSTEM_ADMIN':
+
+        user_role = getattr(request.user, 'role', None)
+
+        # System admins and superusers have unrestricted access
+        if request.user.is_staff or user_role in ['SYSTEM_ADMIN', 'ADMIN']:
             return True
-            
-        # Department admins can only access tasks belonging to their department
-        if hasattr(request.user, 'managed_department'):
-            return obj.department == request.user.managed_department
-            
+
+        # Check department ownership (handles both managed_department and department field names)
+        user_dept = getattr(request.user, 'managed_department', None) or getattr(request.user, 'department', None)
+        
+        if user_dept and hasattr(obj, 'department'):
+            return obj.department == user_dept
+
         return False

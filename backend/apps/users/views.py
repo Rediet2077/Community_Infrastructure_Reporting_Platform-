@@ -11,8 +11,11 @@ from .serializers import (
     RegisterSerializer,
     CustomTokenObtainPairSerializer,
     UserAdminUpdateSerializer,
+    ChangePasswordSerializer,
+    UserStatusUpdateSerializer,
 )
-from utils.responses import success_response
+
+from utils.responses import success_response, error_response
 from utils.permissions import IsSystemAdmin
 from utils.audit import record_audit_log
 
@@ -191,4 +194,88 @@ class UserDetailAdminView(generics.RetrieveUpdateAPIView):
         return success_response(
             data=UserSerializer(instance).data,
             message="User role/status updated successfully."
+        )
+
+class ChangePasswordView(generics.GenericAPIView):
+    """
+    Authenticated endpoint allowing users to change their password securely.
+    """
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        old_password = serializer.validated_data.get('old_password')
+        new_password = serializer.validated_data.get('new_password')
+
+        if not user.check_password(old_password):
+            return error_response(
+                message="Invalid credentials.",
+                errors={"old_password": ["Current password is incorrect."]},
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
+
+        user.set_password(new_password)
+        user.save()
+
+        # Record audit log for security credential change
+        record_audit_log(
+            action="PASSWORD_CHANGED",
+            entity_type="User",
+            entity_id=user.id,
+            actor=user,
+            request=request,
+            reason="User successfully changed account password."
+        )
+
+        return success_response(
+            message="Password changed successfully. Please authenticate with your new password."
+        )
+
+
+class UserStatusUpdateView(generics.UpdateAPIView):
+    """
+    System Admin only: Explicitly toggle account activation or verification status.
+    """
+    serializer_class = UserStatusUpdateSerializer
+    permission_classes = [IsSystemAdmin]
+    queryset = User.objects.all()
+    lookup_field = 'id'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', True)
+        instance = self.get_object()
+
+        old_values = {
+            "is_active": instance.is_active,
+            "is_verified": instance.is_verified,
+        }
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        new_values = {
+            "is_active": instance.is_active,
+            "is_verified": instance.is_verified,
+        }
+
+        # Record audit log for administrative status toggle
+        record_audit_log(
+            action="USER_STATUS_TOGGLED",
+            entity_type="User",
+            entity_id=instance.id,
+            actor=request.user,
+            request=request,
+            old_values=old_values,
+            new_values=new_values,
+            reason=f"Admin updated active/verified flags for {instance.email}."
+        )
+
+        return success_response(
+            data=UserSerializer(instance).data,
+            message="User account status updated successfully."
         )

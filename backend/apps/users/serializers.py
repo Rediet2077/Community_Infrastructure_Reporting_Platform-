@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from utils.enums import UserRole
+from django.contrib.auth.password_validation import validate_password
 
 User = get_user_model()
 
@@ -110,3 +111,24 @@ class UserAdminUpdateSerializer(serializers.ModelSerializer):
         if value not in UserRole.values:
             raise serializers.ValidationError(f"Invalid role. Choices are: {UserRole.values}")
         return value
+class ChangePasswordSerializer(serializers.Serializer):
+    """
+    Serializer for password change requests by authenticated users.
+    """
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True, validators=[validate_password])
+    confirm_new_password = serializers.CharField(required=True, write_only=True)
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_new_password']:
+            raise serializers.ValidationError({"confirm_new_password": "New passwords do not match."})
+        return attrs
+
+
+class UserStatusUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for administrative account lifecycle actions (activate, deactivate, verify).
+    """
+    class Meta:
+        model = User
+        fields = ['is_active', 'is_verified']

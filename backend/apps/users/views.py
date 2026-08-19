@@ -5,6 +5,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
 from utils.pagination import StandardResultsSetPagination
+from rest_framework.throttling import ScopedRateThrottle
 
 from .serializers import (
     UserSerializer,
@@ -28,6 +29,8 @@ class RegisterView(generics.CreateAPIView):
     """
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -67,7 +70,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     Custom JWT login endpoint returning user metadata.
     """
     serializer_class = CustomTokenObtainPairSerializer
-
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
+    
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -202,7 +207,9 @@ class ChangePasswordView(generics.GenericAPIView):
     """
     serializer_class = ChangePasswordSerializer
     permission_classes = [IsAuthenticated]
-
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'auth'
+    
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)

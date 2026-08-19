@@ -188,6 +188,23 @@ REST_FRAMEWORK = {
     ),
     'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
 }
+# -----------------------------------------------------------------------------
+# REST Framework & JWT
+# -----------------------------------------------------------------------------
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'utils.pagination.StandardResultsSetPagination',
+    'PAGE_SIZE': 20,
+    'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
+}
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),

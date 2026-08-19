@@ -2,28 +2,24 @@ from rest_framework import generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from utils.permissions import IsSystemAdmin
 from utils.responses import success_response
+from utils.pagination import StandardResultsSetPagination
 from .models import AuditLog
 from .serializers import AuditLogSerializer
 
 
 class AuditLogListView(generics.ListAPIView):
     """
-    System Admin only: Query, filter, and inspect immutable audit trail logs.
+    System Admin only: Query, filter, and inspect immutable audit trail logs
+    with standard pagination support.
     """
     serializer_class = AuditLogSerializer
     permission_classes = [IsSystemAdmin]
+    pagination_class = StandardResultsSetPagination
     queryset = AuditLog.objects.select_related('user').all()
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['action', 'entity_type', 'user__email']
     search_fields = ['action', 'entity_type', 'reason', 'user__email', 'user__first_name', 'user__last_name']
     ordering_fields = ['created_at', 'action', 'entity_type']
-
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        return success_response(
-            data=response.data,
-            message="Audit logs retrieved successfully."
-        )
 
 
 class AuditLogDetailView(generics.RetrieveAPIView):

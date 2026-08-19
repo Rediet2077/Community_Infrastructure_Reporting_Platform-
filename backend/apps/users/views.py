@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import get_user_model
+from utils.pagination import StandardResultsSetPagination
 
 from .serializers import (
     UserSerializer,
@@ -129,15 +130,13 @@ class UserListView(generics.ListAPIView):
     """
     serializer_class = UserSerializer
     permission_classes = [IsSystemAdmin]
+    pagination_class = StandardResultsSetPagination
     queryset = User.objects.all().order_by('-created_at')
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['role', 'is_active', 'is_verified', 'preferred_language']
     search_fields = ['email', 'first_name', 'last_name', 'phone_number']
     ordering_fields = ['created_at', 'email', 'role']
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        return success_response(data=response.data, message="Users retrieved successfully.")
 
 
 class UserDetailAdminView(generics.RetrieveUpdateAPIView):

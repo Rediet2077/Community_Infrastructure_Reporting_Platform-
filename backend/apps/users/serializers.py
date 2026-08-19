@@ -92,3 +92,21 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'role': self.user.role,
         }
         return data
+
+
+class UserAdminUpdateSerializer(serializers.ModelSerializer):
+    """
+    Serializer for System Admins to update user roles and statuses.
+    """
+    class Meta:
+        model = User
+        fields = [
+            'role',
+            'is_active',
+            'is_verified',
+        ]
+
+    def validate_role(self, value):
+        if value not in UserRole.values:
+            raise serializers.ValidationError(f"Invalid role. Choices are: {UserRole.values}")
+        return value

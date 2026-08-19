@@ -6,10 +6,13 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # Users & Authentication
+    # Users & Authentication (Migbaru's Scope)
     path('api/v1/', include('apps.users.urls')),
 
-    # Domain App Routes (keep your existing app includes here)
+    # Audit Engine (Migbaru's Scope)
+    path('api/v1/', include('apps.audit.urls')),
+
+    # Domain App Routes
     path('api/v1/assets/', include('apps.assets.urls')),
 ]
 

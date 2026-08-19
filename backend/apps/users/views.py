@@ -13,6 +13,7 @@ from .serializers import (
 )
 from utils.responses import success_response
 from utils.permissions import IsSystemAdmin
+from utils.audit import record_audit_log
 
 User = get_user_model()
 
@@ -29,7 +30,17 @@ class RegisterView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        # Generate tokens on successful registration
+        # Record audit log for registration
+        record_audit_log(
+            action="USER_REGISTERED",
+            entity_type="User",
+            entity_id=user.id,
+            actor=user,
+            request=request,
+            new_values={"email": user.email, "role": user.role},
+            reason="Citizen self-registration."
+        )
+
         refresh = RefreshToken.for_user(user)
         user_data = UserSerializer(user).data
 
@@ -56,6 +67,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        # Record audit log for login
+        user = serializer.user
+        record_audit_log(
+            action="USER_LOGGED_IN",
+            entity_type="User",
+            entity_id=user.id,
+            actor=user,
+            request=request,
+            reason="User logged in via JWT credentials."
+        )
+
         return success_response(
             data=serializer.validated_data,
             message="Authentication successful."
@@ -79,9 +102,24 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        old_data = {"first_name": instance.first_name, "last_name": instance.last_name}
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
+        # Record audit log for profile update
+        record_audit_log(
+            action="PROFILE_UPDATED",
+            entity_type="User",
+            entity_id=instance.id,
+            actor=instance,
+            request=request,
+            old_values=old_data,
+            new_values={"first_name": instance.first_name, "last_name": instance.last_name},
+            reason="User updated their profile details."
+        )
+
         return success_response(data=serializer.data, message="Profile updated successfully.")
 
 
@@ -123,9 +161,34 @@ class UserDetailAdminView(generics.RetrieveUpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        old_values = {
+            "role": instance.role,
+            "is_active": instance.is_active,
+            "is_verified": instance.is_verified,
+        }
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
+        new_values = {
+            "role": instance.role,
+            "is_active": instance.is_active,
+            "is_verified": instance.is_verified,
+        }
+
+        # Record audit log for admin user modification
+        record_audit_log(
+            action="USER_ADMIN_MODIFIED",
+            entity_type="User",
+            entity_id=instance.id,
+            actor=request.user,
+            request=request,
+            old_values=old_values,
+            new_values=new_values,
+            reason=f"Admin modified user status/role to {instance.role}."
+        )
+
         return success_response(
             data=UserSerializer(instance).data,
             message="User role/status updated successfully."

@@ -1,13 +1,13 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from .models import Department
 from .serializers import DepartmentSerializer
-from apps.tasks.permissions import IsDepartmentAdmin
+from apps.tasks.permissions import IsDepartmentManagerOrAdmin
 
 class DepartmentViewSet(viewsets.ModelViewSet):
-    queryset = Department.objects.filter(is_active=True)
+    """
+    API endpoint for managing infrastructure departments.
+    """
+    queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-
-    def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [permissions.IsAuthenticated(), IsDepartmentAdmin()]
-        return [permissions.IsAuthenticated()]
+    permission_classes = [IsAuthenticated, IsDepartmentManagerOrAdmin]

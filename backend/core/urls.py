@@ -14,11 +14,11 @@ urlpatterns = [
 
     # Domain App Routes
     path('api/v1/assets/', include('apps.assets.urls')),
+    path('api/v1/tasks/', include('apps.tasks.urls')),
+    path('api/v1/departments/', include('apps.departments.urls'))
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    path('api/v1/tasks/', include('apps.tasks.urls')),
     # ... other apps
-]

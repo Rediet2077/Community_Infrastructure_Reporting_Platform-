@@ -18,6 +18,7 @@ urlpatterns = [
     path('api/v1/departments/', include('apps.departments.urls')),
     path('api/v1/', include('apps.collaborations.urls')),
     path('api/v1/disputes/', include('apps.disputes.urls')),
+    path('api/v1/', include('apps.notifications.urls')),
 ]
 
 if settings.DEBUG:

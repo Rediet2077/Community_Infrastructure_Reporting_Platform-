@@ -1,10 +1,10 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import Task, TaskExtension
+from .models import Task
 from .serializers import TaskSerializer, TaskExtensionSerializer
 from .services import request_deadline_extension, mark_task_completed
-from common.permissions import IsTaskDepartmentAdmin
+from .permissions import IsTaskDepartmentAdmin
 
 class TaskViewSet(viewsets.ModelViewSet):
     queryset = Task.objects.all()
@@ -13,20 +13,14 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        # System admins see all tasks
         if user.role == 'SYSTEM_ADMIN':
             return Task.objects.all()
-        # Department admins see tasks for their assigned department
         if hasattr(user, 'managed_department'):
             return Task.objects.filter(department=user.managed_department)
-        # Citizens see tasks for reports they submitted
         return Task.objects.filter(report__citizen=user)
 
     @action(detail=True, methods=['post'], url_path='request-extension')
     def request_extension(self, request, pk=None):
-        """
-        Endpoint for department admins to request a deadline extension.
-        """
         task = self.get_object()
         serializer = TaskExtensionSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -42,9 +36,6 @@ class TaskViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='complete')
     def complete_task(self, request, pk=None):
-        """
-        Endpoint to mark a task as completed (pending verification).
-        """
         task = self.get_object()
         completion_notes = request.data.get('completion_notes', '')
         updated_task = mark_task_completed(task.id, completion_notes)

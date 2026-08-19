@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from .models import Department
 from .serializers import DepartmentSerializer
-from common.permissions import IsDepartmentAdmin
+from apps.tasks.permissions import IsDepartmentAdmin
 
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.filter(is_active=True)

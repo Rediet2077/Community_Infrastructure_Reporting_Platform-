@@ -15,7 +15,8 @@ urlpatterns = [
     # Domain App Routes
     path('api/v1/assets/', include('apps.assets.urls')),
     path('api/v1/tasks/', include('apps.tasks.urls')),
-    path('api/v1/departments/', include('apps.departments.urls'))
+    path('api/v1/departments/', include('apps.departments.urls')),
+    path('api/v1/', include('apps.collaborations.urls')),
 ]
 
 if settings.DEBUG:

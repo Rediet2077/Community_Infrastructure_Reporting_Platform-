@@ -44,6 +44,7 @@ class TaskStatus(models.TextChoices):
     VERIFIED = 'VERIFIED', 'Verified'
     REJECTED = 'REJECTED', 'Rejected'
     REOPENED = 'REOPENED', 'Reopened'
+    OVERDUE = 'OVERDUE', 'Overdue'
     CANCELLED = 'CANCELLED', 'Cancelled'
 
 

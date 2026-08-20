@@ -13,7 +13,7 @@ class CollaborationAdmin(admin.ModelAdmin):
         'requested_by',
         'created_at',
     )
-    list_filter = ('status', 'requesting_department', 'target_department', 'created_at')
+    list_filter = ('status', 'primary_department', 'supporting_department', 'created_at')
     search_fields = (
         'primary_department__name',
         'supporting_department__name',

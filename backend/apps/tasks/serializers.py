@@ -27,6 +27,7 @@ class TaskSerializer(serializers.ModelSerializer):
         model = Task
         fields = [
             'id', 'task_number', 'report', 'asset', 'department',
+            'assigned_contractor',
             'department_name', 'title', 'description', 'priority', 
             'status', 'progress_percent', 'original_deadline', 
             'current_deadline', 'accepted_at', 'started_at', 

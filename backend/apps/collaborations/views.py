@@ -37,6 +37,27 @@ class CollaborationViewSet(viewsets.ModelViewSet):
 
         return self.queryset.none()
 
+    def create(self, request, *args, **kwargs):
+        report_id = request.data.get('report')
+        supporting_department_id = request.data.get('supporting_department')
+        reason = request.data.get('reason')
+        if not report_id or not supporting_department_id or not reason:
+            return Response(
+                {"error": "'report', 'supporting_department', and 'reason' are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        try:
+            collaboration = create_collaboration_request(
+                user=request.user,
+                report_id=report_id,
+                supporting_department_id=supporting_department_id,
+                reason=reason,
+            )
+            return Response(self.get_serializer(collaboration).data, status=status.HTTP_201_CREATED)
+        except Exception as exc:
+            return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
     @action(detail=True, methods=['post'], url_path='respond')
     def respond(self, request, pk=None):
         """

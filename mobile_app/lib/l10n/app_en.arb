@@ -1,0 +1,139 @@
+{
+  "@@locale": "en",
+
+  "emailAddress": "Email address",
+  "password": "Password",
+  "forgotPassword": "Forgot password?",
+  "logIn": "Log In",
+  "or": "or",
+  "selectLanguage": "Select Language",
+  "chooseLanguage": "Choose your preferred language",
+  "termsPrefix": "By logging in, you agree to our ",
+  "termsOfUse": "Terms of Use",
+  "and": " and ",
+  "privacyPolicy": "Privacy Policy",
+  "noAccount": "Don't have an account? ",
+  "signUp": "Sign Up",
+  "enterEmail": "Enter email",
+  "enterPassword": "Enter password",
+
+  "createAccount": "Create Account",
+  "registerSubtitle": "Join CIRP and help make our community better.",
+  "fullName": "Full name",
+  "phoneNumber": "Phone number",
+  "confirmPassword": "Confirm password",
+  "enterName": "Enter name",
+  "minChars": "Min 6 characters",
+  "passwordsMismatch": "Passwords don't match",
+  "agreeTerms": "I agree to the ",
+  "agreePlease": "Please agree to Terms of Use and Privacy Policy",
+  "alreadyHaveAccount": "Already have an account? ",
+
+  "greeting": "Hello, Selam!",
+  "homeSubtitle": "Let's make our community better together.",
+  "reportProblem": "Report Problem",
+  "reportProblemSub": "Report infrastructure problems in your area",
+  "myReports": "My Reports",
+  "myReportsSub": "View and track your submitted reports",
+  "notifications": "Notifications",
+  "notificationsSub": "View important updates and messages",
+  "profile": "Profile",
+  "profileSub": "Manage your profile and settings",
+  "recentReports": "Recent Reports",
+  "viewAll": "View All",
+
+  "navHome": "Home",
+  "navMap": "Map",
+  "navReports": "Reports",
+  "navProfile": "Profile",
+
+  "editProfile": "Edit Profile",
+  "language": "Language",
+  "helpSupport": "Help & Support",
+  "aboutCirp": "About CIRP",
+  "logout": "Logout",
+  "logoutConfirm": "Are you sure you want to log out?",
+  "cancel": "Cancel",
+  "aboutText": "CIRP (Community Infrastructure Reporting Platform) helps citizens report and track infrastructure problems in their community. Together we can build a better city.",
+  "ok": "OK",
+
+  "verifyEmail": "Verify Your Email",
+  "otpSentTo": "We sent a 6-digit code to\n{email}",
+  "@otpSentTo": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "enterOtp": "Enter the 6-digit code",
+  "verifyCode": "Verify Code",
+  "didntReceive": "Didn't receive the code?",
+  "resendCode": "Resend Code",
+  "resendIn": "Resend in {seconds}s",
+  "@resendIn": {
+    "placeholders": {
+      "seconds": { "type": "String" }
+    }
+  },
+  "invalidOtp": "Invalid code. Please try again.",
+  "otpExpired": "Code expired. Please request a new one.",
+  "otpSuccess": "Email verified successfully!",
+  "changeEmail": "Change email",
+
+  "reportProblemTitle": "Report Problem",
+  "stepLocation": "Location",
+  "stepDetails": "Details",
+  "stepPhoto": "Photo",
+  "stepReview": "Review",
+  "next": "Next",
+  "submit": "Submit",
+  "reportSubmitted": "Report Submitted!",
+  "reportSubmittedMsg": "Your report has been submitted successfully. We'll notify you about its progress.",
+  "done": "Done",
+  "categoryAI": "Category (AI Suggestion)",
+  "description": "Description",
+  "descriptionHint": "Describe the problem in detail...",
+  "change": "Change",
+  "changeLocation": "Change Location",
+  "addPhoto": "Add Photo",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "photoInstruction": "Make sure the problem is clearly visible",
+  "reviewYourReport": "Review Your Report",
+  "photoAttached": "Photo attached",
+  "noPhotoAttached": "No photo attached",
+
+  "myReportsTitle": "My Reports",
+  "tabAll": "All",
+  "tabInProgress": "In Progress",
+  "tabResolved": "Resolved",
+  "tabRejected": "Rejected",
+  "noTabReports": "No {tab} reports",
+  "@noTabReports": {
+    "placeholders": {
+      "tab": { "type": "String" }
+    }
+  },
+
+  "reportDetails": "Report Details",
+  "progressTimeline": "Progress Timeline",
+  "contactOfficer": "Contact Officer",
+  "statusSubmitted": "Submitted",
+  "statusUnderReview": "Under Review",
+  "statusAssigned": "Assigned to Contractor",
+  "statusInProgress": "In Progress",
+  "statusCompleted": "Completed",
+  "statusConfirmed": "Confirmed",
+
+  "notificationsTitle": "Notifications",
+  "markAllRead": "Mark all as read",
+
+  "mapTitle": "Map",
+  "searchLocation": "Search location",
+
+  "catRoadDamage": "Road Damage",
+  "catWaterLeakage": "Water Leakage",
+  "catGarbage": "Garbage",
+  "catStreetlight": "Streetlight",
+  "catDrainage": "Drainage",
+  "catOther": "Other"
+}

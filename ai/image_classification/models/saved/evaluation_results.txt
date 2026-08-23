@@ -1,0 +1,16 @@
+Overall Accuracy: 90.7%
+
+Per-Category Report:
+                     precision    recall  f1-score   support
+
+           drainage       0.62      0.71      0.66        34
+            garbage       1.00      1.00      1.00       160
+              other       0.00      0.00      0.00        23
+    public_facility       0.94      0.86      0.90        36
+        road_damage       0.98      0.99      0.98       243
+streetlight_failure       0.54      0.43      0.48        30
+      water_leakage       0.82      1.00      0.90        95
+
+           accuracy                           0.91       621
+          macro avg       0.70      0.71      0.70       621
+       weighted avg       0.88      0.91      0.89       621

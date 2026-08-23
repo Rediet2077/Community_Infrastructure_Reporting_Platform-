@@ -61,7 +61,7 @@ def build_model(num_classes=NUM_CLASSES, pretrained=True):
         nn.Linear(in_features, num_classes),
     )
 
-    print(f"Final layer replaced: 1280 → {num_classes} classes")
+    print(f"Final layer replaced: 1280 -> {num_classes} classes")
     return model
 
 

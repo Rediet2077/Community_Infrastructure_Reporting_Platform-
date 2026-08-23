@@ -29,7 +29,8 @@ class DuplicateRequest(BaseModel):
     category:    str
     latitude:    Optional[float] = None
     longitude:   Optional[float] = None
-
+    image:       Optional[str] = None  # NEW: base64 image
+    
     # Existing report to compare against
     existing_report_id:   int
     existing_title:       str
@@ -37,6 +38,7 @@ class DuplicateRequest(BaseModel):
     existing_category:    str
     existing_latitude:    Optional[float] = None
     existing_longitude:   Optional[float] = None
+    existing_image:       Optional[str] = None  # NEW: base64 image
 
 
 class DuplicateResponse(BaseModel):
@@ -58,6 +60,7 @@ async def detect_duplicate_endpoint(request: DuplicateRequest):
 
     Compare a new report against one existing report.
     Returns whether they describe the same infrastructure problem.
+    NOW INCLUDES IMAGE SIMILARITY!
 
     Example response:
     {
@@ -68,7 +71,7 @@ async def detect_duplicate_endpoint(request: DuplicateRequest):
             "text":     {"score": 0.88},
             "location": {"score": 0.95},
             "category": {"score": 1.00},
-            "image":    {"score": null}
+            "image":    {"score": 0.85}  ← NEW!
         }
     }
 
@@ -76,20 +79,50 @@ async def detect_duplicate_endpoint(request: DuplicateRequest):
     This is a recommendation only.
     """
     try:
+        # Convert base64 images to PIL Images
+        new_image_pil = None
+        existing_image_pil = None
+        
+        if request.image:
+            import base64
+            import io
+            from PIL import Image
+            try:
+                # Handle data URI format
+                image_data = request.image.split(',')[1] if ',' in request.image else request.image
+                image_bytes = base64.b64decode(image_data)
+                new_image_pil = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            except Exception as e:
+                print(f"Error decoding new image: {e}")
+                new_image_pil = None
+        
+        if request.existing_image:
+            import base64
+            import io
+            from PIL import Image
+            try:
+                # Handle data URI format
+                image_data = request.existing_image.split(',')[1] if ',' in request.existing_image else request.existing_image
+                image_bytes = base64.b64decode(image_data)
+                existing_image_pil = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            except Exception as e:
+                print(f"Error decoding existing image: {e}")
+                existing_image_pil = None
+        
         result = detect_duplicate(
             new_title=request.title,
             new_description=request.description,
             new_category=request.category,
             new_lat=request.latitude,
             new_lon=request.longitude,
-            new_image=None,
+            new_image=new_image_pil,  # NOW PASSING IMAGE!
 
             existing_title=request.existing_title,
             existing_description=request.existing_description,
             existing_category=request.existing_category,
             existing_lat=request.existing_latitude,
             existing_lon=request.existing_longitude,
-            existing_image=None,
+            existing_image=existing_image_pil,  # NOW PASSING IMAGE!
 
             existing_report_id=request.existing_report_id,
         )

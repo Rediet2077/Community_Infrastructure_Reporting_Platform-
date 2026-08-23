@@ -12,8 +12,9 @@ import cv2
 import numpy as np
 from PIL import Image
 
-# Threshold — images below this are considered blurry
-BLUR_THRESHOLD = 80.0
+# Threshold — images below this are considered VERY blurry
+# Only extremely blurry/dark/unidentifiable images should fail
+BLUR_THRESHOLD = 30.0  # Changed from 50.0 - only reject truly unusable images
 
 
 def compute_blur_score(image: Image.Image) -> float:
@@ -59,9 +60,9 @@ def is_blurry(image: Image.Image, threshold: float = BLUR_THRESHOLD) -> dict:
     blurry = score < threshold
 
     if blurry:
-        message = "Photo is too blurry. Please retake a clearer photo."
+        message = "Image quality check failed: Photo is too blurry, dark, or difficult to identify. Please retake a clearer photo."
     else:
-        message = "Photo sharpness is acceptable."
+        message = "Photo quality is acceptable."
 
     return {
         "is_blurry":  blurry,

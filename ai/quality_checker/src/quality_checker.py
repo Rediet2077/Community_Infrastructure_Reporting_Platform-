@@ -23,8 +23,8 @@ def check_image_quality(image: Image.Image) -> dict:
     Runs all quality checks on an uploaded image.
 
     Checks:
-      1. Is the image too blurry?
-      2. Is the image relevant to infrastructure?
+      1. Is the image VERY blurry? (only reject extremely blurry)
+      2. Is the image relevant to infrastructure? (warning only)
 
     Args:
         image: PIL Image from citizen upload
@@ -44,46 +44,36 @@ def check_image_quality(image: Image.Image) -> dict:
     PASS:
         { "status": "pass", "message": "Photo looks good." }
 
-    FAIL (blurry):
+    FAIL (VERY blurry):
         { "status": "fail", "message": "Photo is too blurry. Please retake." }
 
-    FAIL (not relevant):
-        { "status": "fail", "message": "This does not look like infrastructure." }
-
-    WARNING (low confidence):
-        { "status": "warning", "message": "Photo accepted but unclear category." }
+    PASS (low relevance - but still accepted):
+        { "status": "pass", "message": "Photo accepted." }
     """
 
-    # ── Check 1: Blur ─────────────────────────────────────
+    # ── Check 1: Blur (only fail if VERY blurry) ─────────
     blur_result = is_blurry(image)
 
-    # ── Check 2: Relevance ────────────────────────────────
+    # ── Check 2: Relevance (warning only, don't fail) ────
     relevance_result = check_relevance(image)
 
     # ── Decision ──────────────────────────────────────────
+    # ONLY FAIL if image is VERY blurry
     if blur_result["is_blurry"]:
         status  = FAIL
         message = blur_result["message"]
 
-    elif not relevance_result["is_relevant"]:
-        status  = FAIL
-        message = relevance_result["message"]
-
-    elif relevance_result["confidence"] < 0.50:
-        status  = WARNING
-        message = (
-            f"Photo accepted. Category suggestion: {relevance_result['best_category']} "
-            f"({relevance_result['confidence']*100:.0f}% confidence). "
-            "You can correct this if needed."
-        )
-
+    # Otherwise PASS - let duplicate detection handle the rest
     else:
         status  = PASS
-        message = (
-            f"Photo looks good. "
-            f"Detected: {relevance_result['best_category']} "
-            f"({relevance_result['confidence']*100:.0f}% confidence)."
-        )
+        if relevance_result["confidence"] >= 0.50:
+            message = (
+                f"Photo accepted. "
+                f"Detected: {relevance_result['best_category']} "
+                f"({relevance_result['confidence']*100:.0f}% confidence)."
+            )
+        else:
+            message = "Photo accepted. Proceeding to duplicate check..."
 
     return {
         "status":  status,

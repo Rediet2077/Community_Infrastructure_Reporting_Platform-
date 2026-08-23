@@ -1,0 +1,34 @@
+name: cirp
+description: CIRP - Community Infrastructure Reporting Platform
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.0
+  provider: ^6.1.2
+  http: ^1.2.1
+  shared_preferences: ^2.2.3
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geolocator: ^12.0.0
+  image_picker: ^1.1.2
+  mailer: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/icon/

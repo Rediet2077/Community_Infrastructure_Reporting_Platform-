@@ -4,7 +4,6 @@ venv/
 env/
 
 # ── AI datasets — images are too large for GitHub ─────────
-# Keep folder structure but exclude all images
 ai/image_classification/dataset/train/
 ai/image_classification/dataset/validation/
 ai/image_classification/dataset/test/
@@ -23,15 +22,29 @@ __pycache__/
 *.py[cod]
 *.pyo
 .env
-.venv/
-venv/
 *.log
 
 # ── Node / React ──────────────────────────────────────────
 node_modules/
-dist/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+coverage/
+
+# next.js
+.next/
+out/
+
+# production
 build/
 .env.local
+.env.*
 
 # ── Flutter ───────────────────────────────────────────────
 mobile/.dart_tool/
@@ -51,3 +64,19 @@ Thumbs.db
 secrets.json
 *.pem
 *.key
+
+# ── Debug logs ────────────────────────────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── TypeScript ────────────────────────────────────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Archives ──────────────────────────────────────────────
+*.tar.gz
+
+# ── Vercel ────────────────────────────────────────────────
+.vercel

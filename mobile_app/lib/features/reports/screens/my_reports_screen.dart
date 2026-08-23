@@ -45,26 +45,27 @@ class _MyReportsScreenState extends State<MyReportsScreen>
   }
 
   List<dynamic> _filtered(int index) {
+    final active = _allReports.where((r) => r['is_deleted_by_citizen'] != true).toList();
     switch (index) {
       case 0:
-        return _allReports;
+        return active;
       case 1:
-        return _allReports.where((r) {
+        return active.where((r) {
           final s = (r['status'] as String? ?? '').toLowerCase();
-          return s == 'in_progress' || s == 'under_review' || s == 'in progress' || s == 'under review';
+          return s == 'in_progress' || s == 'under_review' || s == 'accepted' || s == 'assigned' || s == 'submitted' || s == 'pending_verification' || s == 'in progress' || s == 'under review';
         }).toList();
       case 2:
-        return _allReports
+        return active
             .where((r) =>
                 (r['status'] as String? ?? '').toLowerCase() == 'resolved')
             .toList();
       case 3:
-        return _allReports
+        return active
             .where((r) =>
                 (r['status'] as String? ?? '').toLowerCase() == 'rejected')
             .toList();
       default:
-        return _allReports;
+        return active;
     }
   }
   
@@ -74,7 +75,7 @@ class _MyReportsScreenState extends State<MyReportsScreen>
     if (s == 'in_progress' || s == 'in progress') return AppColors.inProgress;
     if (s == 'under_review' || s == 'under review') return AppColors.underReview;
     if (s == 'rejected') return AppColors.red;
-    return AppColors.orange; // Default color for pending/unknown statuses
+    return AppColors.orange;
   }
 
   @override
@@ -156,16 +157,61 @@ class _MyReportsScreenState extends State<MyReportsScreen>
               itemCount: reports.length,
               itemBuilder: (context, i) {
                 final r = reports[i];
+                final isResolved = (r['status'] as String? ?? '').toLowerCase() == 'resolved';
                 return _ReportCard(
                   title: r['title'] ?? 'Untitled',
                   status: r['status'] ?? 'pending',
-                  date: r['created_at'] ?? '',
+                  date: (r['created_at'] ?? '').toString().split('T')[0],
                   accentColor: _getStatusColor(r['status'] ?? ''),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const ReportDetailsScreen()),
-                  ),
+                  onDelete: isResolved
+                      ? () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Remove Report'),
+                              content: const Text('Remove this resolved report from your mobile history?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx, rootNavigator: true).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.of(ctx, rootNavigator: true).pop(true),
+                                  style: FilledButton.styleFrom(backgroundColor: AppColors.red),
+                                  child: const Text('Remove'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            final reportId = (r['id'] ?? '').toString();
+                            if (reportId.isNotEmpty) {
+                              setState(() {
+                                _allReports.removeWhere((item) => (item['id'] ?? '').toString() == reportId);
+                              });
+                              await ApiService.deleteReport(reportId);
+                              await _loadReports();
+                              if (mounted) {
+                                setState(() {
+                                  _allReports.removeWhere((item) => (item['id'] ?? '').toString() == reportId);
+                                });
+                              }
+                            }
+                          }
+                        }
+                      : null,
+                  onTap: () async {
+                    final reloaded = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ReportDetailsScreen(report: r),
+                      ),
+                    );
+                    if (reloaded == true) {
+                      _loadReports();
+                    }
+                  },
                 );
               },
             );
@@ -182,6 +228,7 @@ class _ReportCard extends StatelessWidget {
   final String date;
   final Color accentColor;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   const _ReportCard({
     required this.title,
@@ -189,77 +236,95 @@ class _ReportCard extends StatelessWidget {
     required this.date,
     required this.accentColor,
     required this.onTap,
+    this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 80,
-              height: 90,
-              decoration: BoxDecoration(
-                color: accentColor.withValues(alpha: 0.10),
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(14),
-                  bottomLeft: Radius.circular(14),
-                ),
-                border: Border(
-                  left: BorderSide(color: accentColor, width: 3),
-                ),
-              ),
-              child: Icon(Icons.image_outlined,
-                  color: accentColor.withValues(alpha: 0.5), size: 30),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        height: 1.3,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 80,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      color: accentColor.withValues(alpha: 0.10),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(14),
+                        bottomLeft: Radius.circular(14),
+                      ),
+                      border: Border(
+                        left: BorderSide(color: accentColor, width: 3),
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    StatusBadge(status: status, small: true),
-                    const SizedBox(height: 6),
-                    Text(date,
-                        style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textSecondary)),
-                  ],
-                ),
+                    child: Icon(Icons.image_outlined,
+                        color: accentColor.withValues(alpha: 0.5), size: 30),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 12, 8, 12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                              height: 1.3,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          StatusBadge(status: status, small: true),
+                          const SizedBox(height: 6),
+                          Text(date,
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textSecondary)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+          if (onDelete != null)
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: IconButton(
+                icon: const Icon(Icons.delete_outline, color: AppColors.red, size: 24),
+                onPressed: onDelete,
+                tooltip: 'Remove from history',
+              ),
+            )
+          else
             const Padding(
-              padding: EdgeInsets.only(top: 16, right: 8),
-              child: const Icon(Icons.chevron_right,
+              padding: EdgeInsets.only(right: 12),
+              child: Icon(Icons.chevron_right,
                   color: AppColors.textSecondary, size: 20),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

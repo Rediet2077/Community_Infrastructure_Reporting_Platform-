@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../constants/api_constants.dart';
 
 class AuthService {
-  /// Register a new user
   static Future<Map<String, dynamic>> register({
     required String email,
     required String phoneNumber,
@@ -52,7 +51,6 @@ class AuthService {
     }
   }
 
-  /// Login user
   static Future<Map<String, dynamic>> login({
     required String email,
     required String password,

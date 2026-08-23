@@ -21,14 +21,7 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   late int _currentIndex;
-
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    MapScreen(),
-    SizedBox(),
-    MyReportsScreen(),
-    ProfileScreen(),
-  ];
+  int _refreshCounter = 0;
 
   @override
   void initState() {
@@ -36,15 +29,19 @@ class _MainShellState extends State<MainShell> {
     _currentIndex = widget.initialIndex;
   }
 
-  void _onTabTap(int index) {
+  void _onTabTap(int index) async {
     if (index == 2) {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const ReportProblemScreen()),
       );
+      setState(() => _refreshCounter++);
       return;
     }
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+      _refreshCounter++;
+    });
   }
 
   @override
@@ -53,7 +50,13 @@ class _MainShellState extends State<MainShell> {
       drawer: _buildDrawer(context),
       body: IndexedStack(
         index: _currentIndex == 2 ? 0 : _currentIndex,
-        children: _screens,
+        children: [
+          HomeScreen(key: ValueKey('home_$_refreshCounter')),
+          const MapScreen(),
+          const SizedBox(),
+          MyReportsScreen(key: ValueKey('reports_$_refreshCounter')),
+          const ProfileScreen(),
+        ],
       ),
       bottomNavigationBar: CirpBottomNavBar(
         currentIndex: _currentIndex,

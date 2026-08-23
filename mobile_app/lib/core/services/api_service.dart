@@ -4,7 +4,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 
 class ApiService {
-  /// Get authorization headers with token
   static Future<Map<String, String>> _getAuthHeaders() async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('access_token') ?? '';
@@ -15,7 +14,6 @@ class ApiService {
     };
   }
 
-  /// Get current user profile
   static Future<Map<String, dynamic>> getUserProfile() async {
     try {
       final headers = await _getAuthHeaders();
@@ -45,7 +43,6 @@ class ApiService {
     }
   }
 
-  /// Get all reports (paginated)
   static Future<Map<String, dynamic>> getReports({
     int page = 1,
     int pageSize = 20,
@@ -54,15 +51,14 @@ class ApiService {
   }) async {
     try {
       final headers = await _getAuthHeaders();
-      
-      // Build query parameters
+
       final queryParams = {
         'page': page.toString(),
         'page_size': pageSize.toString(),
       };
       if (status != null) queryParams['status'] = status;
       if (category != null) queryParams['category'] = category;
-      
+
       final uri = Uri.parse(ApiConstants.reportsUrl).replace(
         queryParameters: queryParams,
       );
@@ -96,17 +92,13 @@ class ApiService {
     }
   }
 
-  /// Get user's own reports
   static Future<Map<String, dynamic>> getMyReports({int page = 1}) async {
     try {
       final headers = await _getAuthHeaders();
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('user_id') ?? '';
-      
-      final uri = Uri.parse(ApiConstants.reportsUrl).replace(
+
+      final uri = Uri.parse(ApiConstants.myReportsUrl).replace(
         queryParameters: {
           'page': page.toString(),
-          'reporter': userId,
         },
       );
 
@@ -137,7 +129,6 @@ class ApiService {
     }
   }
 
-  /// Get report by ID
   static Future<Map<String, dynamic>> getReportById(int id) async {
     try {
       final headers = await _getAuthHeaders();
@@ -167,31 +158,34 @@ class ApiService {
     }
   }
 
-  /// Create new report
+  static Future<Map<String, dynamic>> getReportDetails(int id) async {
+    return getReportById(id);
+  }
+
   static Future<Map<String, dynamic>> createReport({
     required String title,
     required String description,
-    required int categoryId,
+    required dynamic categoryId,
     required double latitude,
     required double longitude,
     String? address,
-    String priority = 'medium',
+    String priority = 'MEDIUM',
     List<String>? images,
   }) async {
     try {
       final headers = await _getAuthHeaders();
-      
-      final body = {
+
+      final body = <String, dynamic>{
         'title': title,
         'description': description,
-        'category': categoryId,
+        'category_id': categoryId.toString(),
         'latitude': latitude,
         'longitude': longitude,
-        'priority': priority,
+        'priority': priority.toUpperCase(),
       };
-      
+
       if (address != null) body['address'] = address;
-      if (images != null) body['images'] = images;
+      if (images != null && images.isNotEmpty) body['media_images'] = images;
 
       final response = await http.post(
         Uri.parse(ApiConstants.reportsUrl),
@@ -208,10 +202,17 @@ class ApiService {
           'data': data['data'],
         };
       } else {
+        String errMsg = data['message'] ?? data['detail'] ?? '';
+        if (errMsg.isEmpty && data is Map) {
+          errMsg = data.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+        }
+        if (errMsg.isEmpty) {
+          errMsg = 'Failed to create report (${response.statusCode})';
+        }
         return {
           'success': false,
-          'message': data['message'] ?? 'Failed to create report',
-          'errors': data['errors'],
+          'message': errMsg,
+          'errors': data,
         };
       }
     } catch (e) {
@@ -222,7 +223,6 @@ class ApiService {
     }
   }
 
-  /// Get all categories
   static Future<Map<String, dynamic>> getCategories() async {
     try {
       final headers = await _getAuthHeaders();
@@ -252,7 +252,6 @@ class ApiService {
     }
   }
 
-  /// Get all departments
   static Future<Map<String, dynamic>> getDepartments() async {
     try {
       final headers = await _getAuthHeaders();
@@ -282,7 +281,6 @@ class ApiService {
     }
   }
 
-  /// Get notifications
   static Future<Map<String, dynamic>> getNotifications({int page = 1}) async {
     try {
       final headers = await _getAuthHeaders();
@@ -318,26 +316,20 @@ class ApiService {
     }
   }
 
-  /// Get dashboard statistics
   static Future<Map<String, dynamic>> getDashboardStats() async {
     try {
-      final headers = await _getAuthHeaders();
-      final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getString('user_id') ?? '';
-      
-      // Fetch user's reports to get statistics
       final myReportsResult = await getMyReports();
       final allReportsResult = await getReports(pageSize: 1);
-      
+
       int myReportsCount = 0;
       int pendingCount = 0;
       int inProgressCount = 0;
       int resolvedCount = 0;
-      
+
       if (myReportsResult['success'] == true) {
         myReportsCount = myReportsResult['count'] ?? 0;
         final reports = myReportsResult['data'] as List? ?? [];
-        
+
         for (var report in reports) {
           final status = report['status'] ?? '';
           if (status == 'pending') pendingCount++;
@@ -345,9 +337,9 @@ class ApiService {
           else if (status == 'resolved') resolvedCount++;
         }
       }
-      
+
       final totalReports = allReportsResult['count'] ?? 0;
-      
+
       return {
         'success': true,
         'data': {
@@ -363,6 +355,23 @@ class ApiService {
         'success': false,
         'message': 'Network error: $e',
       };
+    }
+  }
+
+  static Future<Map<String, dynamic>> deleteReport(String reportId) async {
+    try {
+      final headers = await _getAuthHeaders();
+      final response = await http.post(
+        Uri.parse('${ApiConstants.apiBaseUrl}/reports/$reportId/citizen-delete/'),
+        headers: headers,
+      ).timeout(ApiConstants.connectTimeout);
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        return {'success': true, 'message': 'Report removed successfully'};
+      }
+      return {'success': false, 'message': 'Failed to delete report'};
+    } catch (e) {
+      return {'success': false, 'message': 'Network error: $e'};
     }
   }
 }

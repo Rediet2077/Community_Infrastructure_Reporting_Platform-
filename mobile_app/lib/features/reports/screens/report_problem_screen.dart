@@ -1,14 +1,19 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 import 'dart:convert';
+import 'dart:typed_data';
+import 'package:cirp/core/constants/api_constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:cirp/core/theme/app_theme.dart';
 import 'package:cirp/generated/app_localizations.dart';
 import 'package:cirp/features/location/screens/location_picker_screen.dart';
 import 'package:cirp/core/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReportProblemScreen extends StatefulWidget {
   const ReportProblemScreen({super.key});
@@ -32,7 +37,72 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   final _notesController = TextEditingController();
 
   XFile? _pickedImage;
+  Uint8List? _pickedImageBytes;
   final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final img = await _picker.pickImage(
+        source: source,
+        imageQuality: 85,
+        maxWidth: 1920,
+        maxHeight: 1920,
+      );
+
+      if (img == null) return;
+
+      final bytes = await img.readAsBytes();
+
+      final uri = Uri.parse(ApiConstants.uploadUrl);
+      final request = http.MultipartRequest('POST', uri);
+
+      final pref = await SharedPreferences.getInstance();
+      final token = pref.get('access_token');
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'file',
+          bytes,
+          filename: img.name,
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final jsonResponse = jsonDecode(response.body);
+        final fileUrl = jsonResponse['data']?['file_url'];
+        debugPrint('Uploaded to Appwrite: $fileUrl');
+
+        setState(() {
+          _pickedImage = img;
+          _pickedImageBytes = bytes;
+        });
+      } else {
+        throw Exception('Server returned ${response.statusCode}: ${response.body}');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not upload image: $e'),
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildPreviewImage({double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (_pickedImageBytes != null) {
+      return Image.memory(_pickedImageBytes!, width: width, height: height, fit: fit);
+    }
+    return const Center(child: CircularProgressIndicator(color: Colors.white));
+  }
 
   final Map<int, List<String>> _subcategories = {
     0: ['Pothole', 'Crack', 'Erosion'],
@@ -51,9 +121,9 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   ];
 
   List<IconData> get _stepIcons => [
+        Icons.photo_camera_outlined,
         Icons.location_on_outlined,
         Icons.info_outline,
-        Icons.photo_camera_outlined,
         Icons.rate_review_outlined,
       ];
 
@@ -81,80 +151,67 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
     }
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final img = await _picker.pickImage(
-        source: source, imageQuality: 85, maxWidth: 1920, maxHeight: 1920,
-      );
-      if (img != null) setState(() => _pickedImage = img);
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Could not pick image: $e'),
-              backgroundColor: AppColors.red),
-        );
-      }
-    }
-  }
-
   void _next() async {
     if (_currentStep < 3) {
       setState(() => _currentStep++);
     } else {
-      // Submit report to API
       await _submitReport();
     }
   }
 
   Future<void> _submitReport() async {
     final l10n = AppLocalizations.of(context);
-    
-    // Show loading
+
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (ctx) => const Center(child: CircularProgressIndicator()),
     );
-    
-    // Prepare image data (convert to base64 if image exists)
+
     List<String>? imageUrls;
     if (_pickedImage != null) {
       try {
         final bytes = await _pickedImage!.readAsBytes();
         final base64Image = base64Encode(bytes);
-        imageUrls = [base64Image]; // Backend should handle base64 or file upload
+        imageUrls = [base64Image];
       } catch (e) {
-        print('Error reading image: $e');
+        debugPrint('Error reading image: $e');
       }
     }
-    
-    // Get category name
+
     final categories = ['Road Damage', 'Water & Sewage', 'Garbage', 'Streetlight', 'Drainage', 'Other'];
+    final categoryUUIDs = [
+      'd5029881-2d3a-4add-817d-1c48614d39ee',
+      '5e850149-14bd-45b5-a7bf-7aa83dfe97da',
+      '576d6b9f-d2b5-4569-91f4-a9c7cf56be60',
+      '3ffaed57-c384-4a22-8c06-a9817e176de8',
+      '9d84109c-e4df-463d-83ae-d8c31d4ab7e0',
+      '64940c79-479c-4784-ab44-e7b8c0a3c777',
+    ];
     final categoryName = categories[_selectedCategory];
+    final categoryId = categoryUUIDs[_selectedCategory % categoryUUIDs.length];
     final subcategoryName = _currentSubcategories[_selectedSubcategory];
-    
-    // Determine priority based on severity
-    String priority = 'medium';
-    if (_severityIndex == 0) priority = 'low';
-    if (_severityIndex == 2) priority = 'high';
-    
-    // Create report
+
+    String priority = 'MEDIUM';
+    if (_severityIndex == 0) priority = 'LOW';
+    if (_severityIndex == 2) priority = 'HIGH';
+
     final result = await ApiService.createReport(
       title: '$categoryName: $subcategoryName',
-      description: _descController.text.isEmpty 
-          ? 'No description provided' 
+      description: _descController.text.isEmpty
+          ? 'No description provided'
           : _descController.text,
-      categoryId: _selectedCategory + 1, // Assuming category IDs start from 1
+      categoryId: categoryId,
       latitude: _pickedLatLng.latitude,
       longitude: _pickedLatLng.longitude,
       address: _pickedAddress,
       priority: priority,
       images: imageUrls,
     );
-    
+
     if (mounted) {
-      Navigator.pop(context); // Close loading dialog
-      
+      Navigator.pop(context);
+
       if (result['success'] == true) {
         _showSuccess();
       } else {
@@ -209,7 +266,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final steps = [l10n.stepLocation, l10n.stepDetails, l10n.stepPhoto, l10n.stepReview];
+    final steps = [l10n.stepPhoto, l10n.stepLocation, l10n.stepDetails, l10n.stepReview];
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -305,9 +362,9 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
 
   Widget _buildStep(BuildContext context, AppLocalizations l10n) {
     switch (_currentStep) {
-      case 0: return _locationStep(context, l10n);
-      case 1: return _detailsStep(context, l10n);
-      case 2: return _photoStep(context, l10n);
+      case 0: return _photoStep(context, l10n);
+      case 1: return _locationStep(context, l10n);
+      case 2: return _detailsStep(context, l10n);
       case 3: return _reviewStep(context, l10n);
       default: return const SizedBox.shrink();
     }
@@ -442,9 +499,12 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
           child: _pickedImage != null
               ? Stack(fit: StackFit.expand, children: [
                   ClipRRect(borderRadius: BorderRadius.circular(16),
-                      child: Image.file(File(_pickedImage!.path), fit: BoxFit.cover)),
+                      child: _buildPreviewImage(fit: BoxFit.cover)),
                   Positioned(top: 10, right: 10, child: GestureDetector(
-                    onTap: () => setState(() => _pickedImage = null),
+                    onTap: () => setState(() {
+                      _pickedImage = null;
+                      _pickedImageBytes = null;
+                    }),
                     child: Container(
                       width: 32, height: 32,
                       decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.6), shape: BoxShape.circle),
@@ -549,7 +609,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
           const SizedBox(height: 10),
           ClipRRect(borderRadius: BorderRadius.circular(12), child: SizedBox(
             height: 150, width: double.infinity,
-            child: Image.file(File(_pickedImage!.path), fit: BoxFit.cover),
+            child: _buildPreviewImage(fit: BoxFit.cover),
           )),
         ],
         const SizedBox(height: 10),

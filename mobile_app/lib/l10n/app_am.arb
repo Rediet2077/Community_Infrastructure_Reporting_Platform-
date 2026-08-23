@@ -1,6 +1,5 @@
 {
   "@@locale": "am",
-
   "emailAddress": "ኢሜይል አድራሻ",
   "password": "የምስጢር ቃል",
   "forgotPassword": "የምስጢር ቃልዎን ረሱ?",
@@ -16,7 +15,6 @@
   "signUp": "ተመዝገቡ",
   "enterEmail": "ኢሜይል ያስገቡ",
   "enterPassword": "የምስጢር ቃል ያስገቡ",
-
   "createAccount": "መለያ ፍጠሩ",
   "registerSubtitle": "CIRP ይቀላቀሉ እና ማህበረሰባችንን ለማሻሻል ይርዱ።",
   "fullName": "ሙሉ ስም",
@@ -28,7 +26,6 @@
   "agreeTerms": "ከ",
   "agreePlease": "እባክዎ የአጠቃቀም ውሎቹን እና የግልነት ፖሊሲን ይስማሙ",
   "alreadyHaveAccount": "መለያ አሎት? ",
-
   "greeting": "ሰላም, ሰላም!",
   "homeSubtitle": "ማህበረሰባችንን አብረን እናሻሽለው።",
   "reportProblem": "ችግር ሪፖርት ያድርጉ",
@@ -41,12 +38,10 @@
   "profileSub": "የእርስዎን መገለጫ እና ቅንብሮች ያስተዳድሩ",
   "recentReports": "የቅርብ ጊዜ ሪፖርቶች",
   "viewAll": "ሁሉንም ይመልከቱ",
-
   "navHome": "ዋና",
   "navMap": "ካርታ",
   "navReports": "ሪፖርቶች",
   "navProfile": "መገለጫ",
-
   "editProfile": "መገለጫ ያርትዑ",
   "language": "ቋንቋ",
   "helpSupport": "እርዳታ እና ድጋፍ",
@@ -56,7 +51,6 @@
   "cancel": "ሰርዝ",
   "aboutText": "CIRP (የማህበረሰብ መሰረተ ልማት ሪፖርት ማድረጊያ መድረክ) ዜጎች የማህበረሰቡን የመሰረተ ልማት ችግሮችን ሪፖርት እንዲያደርጉ እና እንዲከታተሉ ያግዛል። አብረን የተሻለ ከተማ መገንባት እንችላለን።",
   "ok": "እሺ",
-
   "verifyEmail": "ኢሜይልዎን ያረጋግጡ",
   "otpSentTo": "ወደ {email}\n6-ዲጂት ኮድ ልከናል",
   "enterOtp": "የ6-ዲጂት ኮድ ያስገቡ",
@@ -68,7 +62,6 @@
   "otpExpired": "ኮዱ ጊዜው አልፏል። አዲስ ይጠይቁ።",
   "otpSuccess": "ኢሜይል በተሳካ ሁኔታ ተረጋግጧል!",
   "changeEmail": "ኢሜይል ቀይር",
-
   "reportProblemTitle": "ችግር ሪፖርት ያድርጉ",
   "stepLocation": "አካባቢ",
   "stepDetails": "ዝርዝሮች",
@@ -91,14 +84,12 @@
   "reviewYourReport": "ሪፖርትዎን ይገምግሙ",
   "photoAttached": "ፎቶ ተያይዟል",
   "noPhotoAttached": "ምንም ፎቶ አልተያያዘም",
-
   "myReportsTitle": "የኔ ሪፖርቶች",
   "tabAll": "ሁሉም",
   "tabInProgress": "በሂደት ላይ",
   "tabResolved": "ተፈቷል",
   "tabRejected": "ተቀቧል",
   "noTabReports": "ምንም {tab} ሪፖርቶች የሉም",
-
   "reportDetails": "የሪፖርት ዝርዝሮች",
   "progressTimeline": "የሂደት ጊዜ መስመር",
   "contactOfficer": "ኦፊሰር ያናግሩ",
@@ -108,13 +99,10 @@
   "statusInProgress": "በሂደት ላይ",
   "statusCompleted": "ተጠናቋል",
   "statusConfirmed": "ተረጋግጧል",
-
   "notificationsTitle": "ማሳወቂያዎች",
   "markAllRead": "ሁሉንም እንደተነበቡ ምልክት አድርግ",
-
   "mapTitle": "ካርታ",
   "searchLocation": "አካባቢ ፈልጉ",
-
   "catRoadDamage": "የመንገድ ጉዳት",
   "catWaterLeakage": "የውሃ ፍሳሽ",
   "catGarbage": "ቆሻሻ",

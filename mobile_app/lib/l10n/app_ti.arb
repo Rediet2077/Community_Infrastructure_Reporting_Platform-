@@ -1,6 +1,5 @@
 {
   "@@locale": "ti",
-
   "emailAddress": "ኣድራሻ ኢሜይል",
   "password": "ሕቡእ ቃል",
   "forgotPassword": "ሕቡእ ቃልካ ረሲዕካ?",
@@ -16,7 +15,6 @@
   "signUp": "ተመዝገብ",
   "enterEmail": "ኢሜይል ኣእቱ",
   "enterPassword": "ሕቡእ ቃል ኣእቱ",
-
   "createAccount": "ሕሳብ ፍጠር",
   "registerSubtitle": "CIRP ተጸምበር ማሕበረሰብና ምሕሳን ሓግዝ።",
   "fullName": "ምሉእ ስም",
@@ -28,7 +26,6 @@
   "agreeTerms": "ምስ ",
   "agreePlease": "በጃካ ውዕሎ ምጥቃምን ፖሊሲ ምስጢርነትን ተቀበል",
   "alreadyHaveAccount": "ሕሳብ ኣለካ? ",
-
   "greeting": "ሰላም, ሰላም!",
   "homeSubtitle": "ማሕበረሰብና ሓቢርና ንምሓስን።",
   "reportProblem": "ጸገም ሓብር",
@@ -41,12 +38,10 @@
   "profileSub": "ፕሮፋይልካን ቅንብራትን ኣካይድ",
   "recentReports": "ናይ ቀረባ ጸብጻባት",
   "viewAll": "ኩሉ ርኤ",
-
   "navHome": "ቤት",
   "navMap": "ካርታ",
   "navReports": "ጸብጻባት",
   "navProfile": "ፕሮፋይል",
-
   "editProfile": "ፕሮፋይል ኣርትዕ",
   "language": "ቋንቋ",
   "helpSupport": "ሓገዝ & ደገፍ",
@@ -56,7 +51,6 @@
   "cancel": "ሰርዝ",
   "aboutText": "CIRP (መድረኽ ምሕባር ትካል ማሕበረሰብ) ዜጋታት ጸገማት ትካል ማሕበረሰቦም ከምዝሕብሩን ከምዝከታተሉን ይሕግዝ። ሓቢርና ዝሓሸ ከተማ ክንሃንጽ ንኽእል።",
   "ok": "እሺ",
-
   "verifyEmail": "ኢሜይልካ ኣረጋግጽ",
   "otpSentTo": "ናብ {email}\n6-ዲጂት ኮድ ሰዲድና",
   "enterOtp": "6-ዲጂት ኮድ ኣእቱ",
@@ -68,7 +62,6 @@
   "otpExpired": "ኮድ ኣኽቲሙ። ሓድሽ ሕተት።",
   "otpSuccess": "ኢሜይል ብዓወት ተረጋጊጹ!",
   "changeEmail": "ኢሜይል ቀይር",
-
   "reportProblemTitle": "ጸገም ሓብር",
   "stepLocation": "ቦታ",
   "stepDetails": "ዝርዝር",
@@ -91,14 +84,12 @@
   "reviewYourReport": "ጸብጻብካ ገምግሞ",
   "photoAttached": "ስእሊ ተጸጊዑ",
   "noPhotoAttached": "ምንም ስእሊ ኣይተጸጎዐን",
-
   "myReportsTitle": "ጸብጻባተይ",
   "tabAll": "ኩሉ",
   "tabInProgress": "ኣብ ሂደት",
   "tabResolved": "ተፈቲሑ",
   "tabRejected": "ተነጺጉ",
   "noTabReports": "ምንም {tab} ጸብጻባት የለን",
-
   "reportDetails": "ዝርዝር ጸብጻብ",
   "progressTimeline": "ምዕባሌ ሰዓታዊ መስመር",
   "contactOfficer": "ወኪል ተወከስ",
@@ -108,13 +99,10 @@
   "statusInProgress": "ኣብ ሂደት",
   "statusCompleted": "ተወዲኡ",
   "statusConfirmed": "ተረጋጊጹ",
-
   "notificationsTitle": "ምልክታት",
   "markAllRead": "ኩሉ ከም ዝተነብበ ምልክት ግበር",
-
   "mapTitle": "ካርታ",
   "searchLocation": "ቦታ ድለ",
-
   "catRoadDamage": "ጉድኣት መንገዲ",
   "catWaterLeakage": "ምፍሳስ ማይ",
   "catGarbage": "ጓሓፍ",

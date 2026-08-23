@@ -1,98 +1,137 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:cirp/core/theme/app_theme.dart';
-import 'package:cirp/features/language/language_provider.dart';
 import 'package:cirp/generated/app_localizations.dart';
+import 'package:cirp/core/services/api_service.dart';
 
-class NotificationsScreen extends StatelessWidget {
+class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
+
+  @override
+  State<NotificationsScreen> createState() => _NotificationsScreenState();
+}
+
+class _NotificationsScreenState extends State<NotificationsScreen> {
+  List<dynamic> _notifications = [];
+  bool _isLoading = true;
+  int _unreadCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    setState(() => _isLoading = true);
+
+    final result = await ApiService.getNotifications();
+
+    setState(() {
+      if (result['success'] == true) {
+        _notifications = result['data'] ?? [];
+        _unreadCount = result['unread_count'] ?? 0;
+      }
+      _isLoading = false;
+    });
+  }
+
+  IconData _getIcon(String? type) {
+    final t = (type ?? '').toLowerCase();
+    if (t.contains('update')) return Icons.update_outlined;
+    if (t.contains('resolve')) return Icons.check_circle_outline;
+    if (t.contains('progress')) return Icons.info_outline;
+    if (t.contains('comment')) return Icons.chat_outlined;
+    if (t.contains('assign')) return Icons.person_outline;
+    return Icons.notifications_outlined;
+  }
+
+  Color _getColor(String? type) {
+    final t = (type ?? '').toLowerCase();
+    if (t.contains('resolve') || t.contains('complete')) return AppColors.resolved;
+    if (t.contains('progress')) return AppColors.inProgress;
+    if (t.contains('review')) return AppColors.underReview;
+    if (t.contains('comment')) return AppColors.blue;
+    return AppColors.primary;
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    final notifications = [
-      {
-        'title': 'Your report has been updated',
-        'body': 'Report ID #1023 is now In Progress.',
-        'time': '10 min ago',
-        'icon': Icons.info_outline,
-        'color': AppColors.inProgress,
-        'isRead': false,
-      },
-      {
-        'title': 'New update on your report',
-        'body': 'Report ID #1023 is under review.',
-        'time': '2 hours ago',
-        'icon': Icons.update_outlined,
-        'color': AppColors.underReview,
-        'isRead': false,
-      },
-      {
-        'title': 'Report resolved',
-        'body': 'Report ID #1018 has been resolved.',
-        'time': '1 day ago',
-        'icon': Icons.check_circle_outline,
-        'color': AppColors.resolved,
-        'isRead': true,
-      },
-      {
-        'title': 'Thank you!',
-        'body': 'Your report helps make our community better.',
-        'time': '3 days ago',
-        'icon': Icons.favorite_outline,
-        'color': AppColors.purple,
-        'isRead': true,
-      },
-      {
-        'title': 'Maintenance completed',
-        'body': 'Report ID #1011 has been completed.',
-        'time': '5 days ago',
-        'icon': Icons.build_outlined,
-        'color': AppColors.green,
-        'isRead': true,
-      },
-    ];
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          automaticallyImplyLeading: Navigator.canPop(context),
+          title: Text(l10n.notificationsTitle),
+          backgroundColor: AppColors.white,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () {},
-        ),
+        automaticallyImplyLeading: Navigator.canPop(context),
         title: Text(l10n.notificationsTitle),
         backgroundColor: AppColors.white,
         elevation: 0,
         actions: [
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              l10n.markAllRead,
-              style: const TextStyle(
-                color: AppColors.primary,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+          if (_unreadCount > 0)
+            TextButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Marked all as read')),
+                );
+              },
+              child: Text(
+                l10n.markAllRead,
+                style: const TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
-          ),
         ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(16),
-        itemCount: notifications.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 10),
-        itemBuilder: (context, index) {
-          final n = notifications[index];
-          return _NotificationCard(
-            title: n['title'] as String,
-            body: n['body'] as String,
-            time: n['time'] as String,
-            icon: n['icon'] as IconData,
-            color: n['color'] as Color,
-            isRead: n['isRead'] as bool,
-          );
-        },
+      body: RefreshIndicator(
+        onRefresh: _loadNotifications,
+        child: _notifications.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.notifications_outlined,
+                        size: 64, color: AppColors.textHint),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No notifications yet',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: _notifications.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final n = _notifications[index];
+                  return _NotificationCard(
+                    title: n['title'] ?? 'Notification',
+                    body: n['message'] ?? '',
+                    time: n['created_at'] ?? '',
+                    icon: _getIcon(n['type']),
+                    color: _getColor(n['type']),
+                    isRead: n['is_read'] ?? false,
+                  );
+                },
+              ),
       ),
     );
   }

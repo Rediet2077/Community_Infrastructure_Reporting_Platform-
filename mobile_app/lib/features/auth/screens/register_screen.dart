@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:cirp/core/theme/app_theme.dart';
 import 'package:cirp/features/language/language_provider.dart';
 import 'package:cirp/generated/app_localizations.dart';
-import 'package:cirp/features/auth/screens/otp_screen.dart';
 import 'package:cirp/shared/widgets/custom_text_field.dart';
+import 'package:cirp/core/services/auth_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,6 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   bool _agreedToTerms = false;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -32,28 +33,81 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _register() {
+  void _register() async {
     final l10n = AppLocalizations.of(context);
-    final langProvider = context.watch<LanguageProvider>();if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.agreePlease)),
       );
       return;
     }
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => OtpScreen(email: _emailController.text.trim()),
-      ),
+
+    setState(() => _isLoading = true);
+
+    final langProvider = context.read<LanguageProvider>();
+
+    final nameParts = _nameController.text.trim().split(' ');
+    final firstName = nameParts.first;
+    final lastName = nameParts.length > 1
+        ? nameParts.sublist(1).join(' ')
+        : nameParts.first;
+
+    final result = await AuthService.register(
+      email: _emailController.text.trim(),
+      phoneNumber: _phoneController.text.trim(),
+      firstName: firstName,
+      lastName: lastName,
+      password: _passwordController.text,
+      passwordConfirm: _confirmPasswordController.text,
+      preferredLanguage: langProvider.languageCode,
     );
+
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    if (result['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Registration successful! Please login.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      Navigator.pop(context);
+    } else {
+      final errorMessage = result['message'] ?? 'Registration failed';
+      final errors = result['errors'] as Map<String, dynamic>?;
+
+      String detailedError = errorMessage;
+      if (errors != null) {
+        detailedError += '\n';
+        errors.forEach((key, value) {
+          if (value is List) {
+            detailedError += '\n$key: ${value.join(', ')}';
+          } else {
+            detailedError += '\n$key: $value';
+          }
+        });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(detailedError),
+          backgroundColor: Colors.red,
+          duration: const Duration(seconds: 5),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final langProvider = context.watch<LanguageProvider>();
 
-    final langProvider = context.watch<LanguageProvider>();return Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
@@ -273,8 +327,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _register,
-                  child: Text(l10n.createAccount),
+                  onPressed: _isLoading ? null : _register,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(l10n.createAccount),
                 ),
                 const SizedBox(height: 16),
                 Row(

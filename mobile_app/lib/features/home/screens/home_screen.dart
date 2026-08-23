@@ -1,35 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cirp/core/theme/app_theme.dart';
 import 'package:cirp/core/routes/app_routes.dart';
-import 'package:cirp/features/language/language_provider.dart';
 import 'package:cirp/generated/app_localizations.dart';
 import 'package:cirp/features/reports/screens/report_details_screen.dart';
-import 'package:cirp/shared/widgets/cirp_logo.dart';
 import 'package:cirp/shared/widgets/status_badge.dart';
+import 'package:cirp/core/services/api_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String _userName = '';
+  List<dynamic> _recentReports = [];
+  bool _isLoading = true;
+  int _unreadNotifications = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final firstName = (prefs.getString('user_first_name') ?? '').trim();
+    final lastName = (prefs.getString('user_last_name') ?? '').trim();
+
+    String formattedName = 'User';
+    if (firstName.isNotEmpty) {
+      if (lastName.isEmpty ||
+          lastName.toLowerCase() == firstName.toLowerCase()) {
+        formattedName = firstName;
+      } else {
+        formattedName = '$firstName $lastName';
+      }
+    } else if (lastName.isNotEmpty) {
+      formattedName = lastName;
+    }
+
+    final reportsResult = await ApiService.getMyReports();
+    final notificationsResult = await ApiService.getNotifications();
+
+    setState(() {
+      _userName = formattedName;
+
+      if (reportsResult['success'] == true) {
+        _recentReports = reportsResult['data'] ?? [];
+      }
+
+      if (notificationsResult['success'] == true) {
+        _unreadNotifications = notificationsResult['unread_count'] ?? 0;
+      }
+
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+
+    if (_isLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      drawer: _AppDrawer(l10n: l10n),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, l10n),
-              _buildBanner(),
-              const SizedBox(height: 20),
-              _buildQuickActions(context, l10n),
-              const SizedBox(height: 24),
-              _buildRecentReports(context, l10n),
-              const SizedBox(height: 16),
-            ],
+        child: RefreshIndicator(
+          onRefresh: _loadData,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(context, l10n),
+                _buildBanner(),
+                const SizedBox(height: 20),
+                _buildQuickActions(context, l10n),
+                const SizedBox(height: 24),
+                _buildRecentReports(context, l10n),
+                const SizedBox(height: 16),
+              ],
+            ),
           ),
         ),
       ),
@@ -55,7 +118,7 @@ class HomeScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.greeting,
+                  'Hello, $_userName!',
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -88,18 +151,33 @@ class HomeScreen extends StatelessWidget {
                 onPressed: () =>
                     Navigator.pushNamed(context, AppRoutes.notifications),
               ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: Container(
-                  width: 9,
-                  height: 9,
-                  decoration: const BoxDecoration(
-                    color: AppColors.red,
-                    shape: BoxShape.circle,
+              if (_unreadNotifications > 0)
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.red,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      _unreadNotifications > 9
+                          ? '9+'
+                          : '$_unreadNotifications',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],
@@ -168,8 +246,7 @@ class HomeScreen extends StatelessWidget {
         label: l10n.reportProblem,
         sublabel: l10n.reportProblemSub,
         color: AppColors.primary,
-        onTap: () =>
-            Navigator.pushNamed(context, AppRoutes.reportProblem),
+        onTap: () => Navigator.pushNamed(context, AppRoutes.reportProblem),
       ),
       _ActionItem(
         icon: Icons.assignment_outlined,
@@ -183,8 +260,7 @@ class HomeScreen extends StatelessWidget {
         label: l10n.notifications,
         sublabel: l10n.notificationsSub,
         color: AppColors.orange,
-        onTap: () =>
-            Navigator.pushNamed(context, AppRoutes.notifications),
+        onTap: () => Navigator.pushNamed(context, AppRoutes.notifications),
       ),
       _ActionItem(
         icon: Icons.person_outline,
@@ -220,19 +296,6 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildRecentReports(BuildContext context, AppLocalizations l10n) {
-    final reports = [
-      {
-        'title': 'Large pothole on main road',
-        'status': 'In Progress',
-        'date': 'May 20, 2024',
-      },
-      {
-        'title': 'Streetlight not working',
-        'status': 'Resolved',
-        'date': 'May 18, 2024',
-      },
-    ];
-
     return Column(
       children: [
         Padding(
@@ -264,159 +327,37 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        ...reports.map(
-          (r) => _RecentReportCard(
-            title: r['title']!,
-            status: r['status']!,
-            date: r['date']!,
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const ReportDetailsScreen()),
+        if (_recentReports.isEmpty)
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Text(
+              'No reports yet',
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+          )
+        else
+          ..._recentReports.map(
+            (report) => _RecentReportCard(
+              title: report['title'] ?? 'Untitled',
+              status: report['status'] ?? 'pending',
+              date: report['created_at'] ?? '',
+              onTap: () async {
+                final reloaded = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          ReportDetailsScreen(report: report)),
+                );
+                if (reloaded == true) {
+                  _loadData();
+                }
+              },
             ),
           ),
-        ),
       ],
-    );
-  }
-}
-
-class _AppDrawer extends StatelessWidget {
-  final AppLocalizations l10n;
-
-  const _AppDrawer({required this.l10n});
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      backgroundColor: AppColors.white,
-      child: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 20, vertical: 28),
-              color: AppColors.primary,
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const CirpLogo(size: 60),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Selam Abebe',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const Text(
-                    'selam.abebe@email.com',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                children: [
-                  _DrawerItem(
-                    icon: Icons.home_outlined,
-                    label: l10n.navHome,
-                    onTap: () => Navigator.pop(context),
-                  ),
-                  _DrawerItem(
-                    icon: Icons.map_outlined,
-                    label: l10n.mapTitle,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, AppRoutes.map);
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.assignment_outlined,
-                    label: l10n.myReportsTitle,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, AppRoutes.myReports);
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.notifications_outlined,
-                    label: l10n.notificationsTitle,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(
-                          context, AppRoutes.notifications);
-                    },
-                  ),
-                  _DrawerItem(
-                    icon: Icons.person_outline,
-                    label: l10n.profile,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamed(context, AppRoutes.profile);
-                    },
-                  ),
-                  const Divider(
-                      height: 1,
-                      color: AppColors.divider,
-                      indent: 20,
-                      endIndent: 20),
-                  const SizedBox(height: 8),
-                  _DrawerItem(
-                    icon: Icons.logout,
-                    label: l10n.logout,
-                    color: AppColors.red,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, AppRoutes.login, (_) => false);
-                    },
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text(
-                'CIRP v1.0.0',
-                style: TextStyle(fontSize: 11, color: AppColors.textHint),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DrawerItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-  final Color? color;
-
-  const _DrawerItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final c = color ?? AppColors.textPrimary;
-    return ListTile(
-      leading: Icon(icon, color: c, size: 22),
-      title: Text(label,
-          style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.w500, color: c)),
-      onTap: onTap,
-      contentPadding:
-          const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
     );
   }
 }
@@ -584,8 +525,7 @@ class _RecentReportCard extends StatelessWidget {
 class _BannerSkylinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.12);
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.12);
     final buildings = [
       [0.0, 0.3, 0.06], [0.07, 0.1, 0.07], [0.15, 0.22, 0.08],
       [0.24, 0.0, 0.10], [0.35, 0.18, 0.07], [0.43, 0.28, 0.06],

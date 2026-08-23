@@ -1,6 +1,5 @@
 {
   "@@locale": "or",
-
   "emailAddress": "Teessoo imeelii",
   "password": "Jecha darbii",
   "forgotPassword": "Jecha darbii irraanfattee?",
@@ -16,7 +15,6 @@
   "signUp": "Galmeessi",
   "enterEmail": "Teessoo imeelii galchi",
   "enterPassword": "Jecha darbii galchi",
-
   "createAccount": "Herreega Uumi",
   "registerSubtitle": "CIRP irratti makamu fi hawaasa keenya foyyeessuuf gargaari.",
   "fullName": "Maqaa guutuu",
@@ -28,7 +26,6 @@
   "agreeTerms": "Walii gala ",
   "agreePlease": "Maaloo Shartoota Fayyadamaa fi Imaammata Dhuunfaa walii gali",
   "alreadyHaveAccount": "Herreega qabda? ",
-
   "greeting": "Akkam, Selam!",
   "homeSubtitle": "Hawaasa keenya waliin foyyeessina.",
   "reportProblem": "Rakkoo Gabaasi",
@@ -41,12 +38,10 @@
   "profileSub": "Profaayilii kee fi qindaa'ina bulchi",
   "recentReports": "Gabaasawwan Dhiyoo",
   "viewAll": "Hunda Ilaali",
-
   "navHome": "Mana",
   "navMap": "Kaartaa",
   "navReports": "Gabaasawwan",
   "navProfile": "Profaayilii",
-
   "editProfile": "Profaayilii Gulaali",
   "language": "Afaan",
   "helpSupport": "Gargaarsa & Deeggarsa",
@@ -56,7 +51,6 @@
   "cancel": "Haqi",
   "aboutText": "CIRP (Dhaabbata Gabaasa Misooma Bu'uuraa Hawaasaa) lammiileen rakkoolee misooma hawaasaa gabaasuu fi hordofuuf gargaara. Waliin magaalaa gaarii ijaaruuf dandeenya.",
   "ok": "Tole",
-
   "verifyEmail": "Imeelii Kee Mirkaneessi",
   "otpSentTo": "Koodii lakkoofsa 6 gara\n{email} ergine",
   "enterOtp": "Koodii lakkoofsa 6 galchi",
@@ -68,7 +62,6 @@
   "otpExpired": "Koodiin darbeera. Haaraa gaafadhu.",
   "otpSuccess": "Imeeliin milkaa'inaan mirkanaawe!",
   "changeEmail": "Imeelii jijjiiri",
-
   "reportProblemTitle": "Rakkoo Gabaasi",
   "stepLocation": "Iddoo",
   "stepDetails": "Ibsa",
@@ -91,14 +84,12 @@
   "reviewYourReport": "Gabaasa Kee Ilaaili",
   "photoAttached": "Suuraan maxxanfame",
   "noPhotoAttached": "Suuraan maxxanfamee hin jiru",
-
   "myReportsTitle": "Gabaasawwan Koo",
   "tabAll": "Hunda",
   "tabInProgress": "Adeemaa jira",
   "tabResolved": "Furameera",
   "tabRejected": "Dideera",
   "noTabReports": "Gabaasa {tab} hin jiru",
-
   "reportDetails": "Ibsa Gabaasaa",
   "progressTimeline": "Tartiiba Adeemaa",
   "contactOfficer": "Ofiisara Qunnamaa",
@@ -108,13 +99,10 @@
   "statusInProgress": "Adeemaa jira",
   "statusCompleted": "Xumurame",
   "statusConfirmed": "Mirkanaaye",
-
   "notificationsTitle": "Beeksisawwan",
   "markAllRead": "Hunda dubbifame godhi",
-
   "mapTitle": "Kaartaa",
   "searchLocation": "Iddoo Barbaadi",
-
   "catRoadDamage": "Miidhaa Karaa",
   "catWaterLeakage": "Yaabbii Bishaan",
   "catGarbage": "Kosii",

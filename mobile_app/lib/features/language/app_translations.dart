@@ -3,7 +3,6 @@ class AppTranslations {
 
   const AppTranslations(this.languageCode);
 
-
   String get emailAddress => _t(en: 'Email address', am: 'ኢሜይል አድራሻ', or: 'Teessoo imeelii', ti: 'ኣድራሻ ኢሜይል');
   String get password => _t(en: 'Password', am: 'የምስጢር ቃል', or: 'Jecha darbii', ti: 'ሕቡእ ቃል');
   String get forgotPassword => _t(en: 'Forgot password?', am: 'የምስጢር ቃልዎን ረሱ?', or: 'Jecha darbii irraanfattee?', ti: 'ሕቡእ ቃልካ ረሲዕካ?');

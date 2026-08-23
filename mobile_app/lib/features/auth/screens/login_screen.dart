@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cirp/core/theme/app_theme.dart';
 import 'package:cirp/core/routes/app_routes.dart';
 import 'package:cirp/features/language/language_provider.dart';
 import 'package:cirp/generated/app_localizations.dart';
 import 'package:cirp/shared/widgets/cirp_logo.dart';
 import 'package:cirp/shared/widgets/custom_text_field.dart';
+import 'package:cirp/core/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -26,9 +29,49 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _login() {
-    if (_formKey.currentState?.validate() ?? false) {
-      Navigator.pushReplacementNamed(context, AppRoutes.home);
+  void _login() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+
+    setState(() => _isLoading = true);
+
+    final result = await AuthService.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+    );
+
+    setState(() => _isLoading = false);
+
+    if (!mounted) return;
+
+    if (result['success'] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      final user = result['user'];
+      final tokens = result['tokens'];
+
+      await prefs.setString('access_token', tokens['access'] ?? '');
+      await prefs.setString('refresh_token', tokens['refresh'] ?? '');
+      await prefs.setString('user_id', user['id'] ?? '');
+      await prefs.setString('user_email', user['email'] ?? '');
+      await prefs.setString('user_first_name', user['first_name'] ?? '');
+      await prefs.setString('user_last_name', user['last_name'] ?? '');
+      await prefs.setString('user_role', user['role'] ?? '');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? 'Login failed'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -82,8 +125,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 4),
                 ElevatedButton(
-                  onPressed: _login,
-                  child: Text(l10n.logIn),
+                  onPressed: _isLoading ? null : _login,
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(l10n.logIn),
                 ),
                 const SizedBox(height: 20),
                 Row(

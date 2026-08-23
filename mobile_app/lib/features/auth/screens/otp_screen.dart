@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:cirp/core/theme/app_theme.dart';
 import 'package:cirp/core/routes/app_routes.dart';
 import 'package:cirp/core/services/email_service.dart';
-import 'package:cirp/features/language/language_provider.dart';
 import 'package:cirp/generated/app_localizations.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -72,14 +70,12 @@ class _OtpScreenState extends State<OtpScreen> {
         _otpSent = true;
       });
       _startCountdown();
-      _showSnack('Verification code sent to ${widget.email}',
-          success: true);
+      _showSnack('Verification code sent to ${widget.email}', success: true);
     } else {
       setState(() {
         _isSending = false;
         _hasError = true;
-        _errorMessage =
-            'Could not send email: ${result.message}';
+        _errorMessage = 'Could not send email: ${result.message}';
       });
     }
   }
@@ -219,8 +215,7 @@ class _OtpScreenState extends State<OtpScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -345,8 +340,7 @@ class _OtpScreenState extends State<OtpScreen> {
                   ),
                   const SizedBox(height: 28),
                   ElevatedButton(
-                    onPressed:
-                        (_isFilled && !_isVerifying) ? _verify : null,
+                    onPressed: (_isFilled && !_isVerifying) ? _verify : null,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 52),
                       disabledBackgroundColor:

@@ -1,6 +1,5 @@
 {
   "@@locale": "en",
-
   "emailAddress": "Email address",
   "password": "Password",
   "forgotPassword": "Forgot password?",
@@ -16,7 +15,6 @@
   "signUp": "Sign Up",
   "enterEmail": "Enter email",
   "enterPassword": "Enter password",
-
   "createAccount": "Create Account",
   "registerSubtitle": "Join CIRP and help make our community better.",
   "fullName": "Full name",
@@ -28,7 +26,6 @@
   "agreeTerms": "I agree to the ",
   "agreePlease": "Please agree to Terms of Use and Privacy Policy",
   "alreadyHaveAccount": "Already have an account? ",
-
   "greeting": "Hello, Selam!",
   "homeSubtitle": "Let's make our community better together.",
   "reportProblem": "Report Problem",
@@ -41,12 +38,10 @@
   "profileSub": "Manage your profile and settings",
   "recentReports": "Recent Reports",
   "viewAll": "View All",
-
   "navHome": "Home",
   "navMap": "Map",
   "navReports": "Reports",
   "navProfile": "Profile",
-
   "editProfile": "Edit Profile",
   "language": "Language",
   "helpSupport": "Help & Support",
@@ -56,7 +51,6 @@
   "cancel": "Cancel",
   "aboutText": "CIRP (Community Infrastructure Reporting Platform) helps citizens report and track infrastructure problems in their community. Together we can build a better city.",
   "ok": "OK",
-
   "verifyEmail": "Verify Your Email",
   "otpSentTo": "We sent a 6-digit code to\n{email}",
   "@otpSentTo": {
@@ -78,7 +72,6 @@
   "otpExpired": "Code expired. Please request a new one.",
   "otpSuccess": "Email verified successfully!",
   "changeEmail": "Change email",
-
   "reportProblemTitle": "Report Problem",
   "stepLocation": "Location",
   "stepDetails": "Details",
@@ -101,7 +94,6 @@
   "reviewYourReport": "Review Your Report",
   "photoAttached": "Photo attached",
   "noPhotoAttached": "No photo attached",
-
   "myReportsTitle": "My Reports",
   "tabAll": "All",
   "tabInProgress": "In Progress",
@@ -113,7 +105,6 @@
       "tab": { "type": "String" }
     }
   },
-
   "reportDetails": "Report Details",
   "progressTimeline": "Progress Timeline",
   "contactOfficer": "Contact Officer",
@@ -123,13 +114,10 @@
   "statusInProgress": "In Progress",
   "statusCompleted": "Completed",
   "statusConfirmed": "Confirmed",
-
   "notificationsTitle": "Notifications",
   "markAllRead": "Mark all as read",
-
   "mapTitle": "Map",
   "searchLocation": "Search location",
-
   "catRoadDamage": "Road Damage",
   "catWaterLeakage": "Water Leakage",
   "catGarbage": "Garbage",

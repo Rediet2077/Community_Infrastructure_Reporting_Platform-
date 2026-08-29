@@ -27,30 +27,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadData() async {
-    setState(() => _isLoading = true);
-    
-    // Load user name from storage
     final prefs = await SharedPreferences.getInstance();
-    final firstName = prefs.getString('user_first_name') ?? '';
-    final lastName = prefs.getString('user_last_name') ?? '';
-    
-    // Fetch recent reports from API
-    final reportsResult = await ApiService.getReports(pageSize: 5);
-    
-    // Fetch notifications to get unread count
+    final firstName = (prefs.getString('user_first_name') ?? '').trim();
+    final lastName = (prefs.getString('user_last_name') ?? '').trim();
+
+    String formattedName = 'User';
+    if (firstName.isNotEmpty) {
+      if (lastName.isEmpty ||
+          lastName.toLowerCase() == firstName.toLowerCase()) {
+        formattedName = firstName;
+      } else {
+        formattedName = '$firstName $lastName';
+      }
+    } else if (lastName.isNotEmpty) {
+      formattedName = lastName;
+    }
+
+    final reportsResult = await ApiService.getMyReports();
     final notificationsResult = await ApiService.getNotifications();
-    
+
     setState(() {
-      _userName = firstName.isNotEmpty ? '$firstName $lastName'.trim() : 'User';
-      
+      _userName = formattedName;
+
       if (reportsResult['success'] == true) {
         _recentReports = reportsResult['data'] ?? [];
       }
-      
+
       if (notificationsResult['success'] == true) {
         _unreadNotifications = notificationsResult['unread_count'] ?? 0;
       }
-      
+
       _isLoading = false;
     });
   }
@@ -58,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     if (_isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.background,
@@ -67,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
     }
-    
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -160,7 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       minHeight: 18,
                     ),
                     child: Text(
-                      _unreadNotifications > 9 ? '9+' : '$_unreadNotifications',
+                      _unreadNotifications > 9
+                          ? '9+'
+                          : '$_unreadNotifications',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -238,8 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
         label: l10n.reportProblem,
         sublabel: l10n.reportProblemSub,
         color: AppColors.primary,
-        onTap: () =>
-            Navigator.pushNamed(context, AppRoutes.reportProblem),
+        onTap: () => Navigator.pushNamed(context, AppRoutes.reportProblem),
       ),
       _ActionItem(
         icon: Icons.assignment_outlined,
@@ -253,8 +260,7 @@ class _HomeScreenState extends State<HomeScreen> {
         label: l10n.notifications,
         sublabel: l10n.notificationsSub,
         color: AppColors.orange,
-        onTap: () =>
-            Navigator.pushNamed(context, AppRoutes.notifications),
+        onTap: () => Navigator.pushNamed(context, AppRoutes.notifications),
       ),
       _ActionItem(
         icon: Icons.person_outline,
@@ -338,11 +344,17 @@ class _HomeScreenState extends State<HomeScreen> {
               title: report['title'] ?? 'Untitled',
               status: report['status'] ?? 'pending',
               date: report['created_at'] ?? '',
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (_) => const ReportDetailsScreen()),
-              ),
+              onTap: () async {
+                final reloaded = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) =>
+                          ReportDetailsScreen(report: report)),
+                );
+                if (reloaded == true) {
+                  _loadData();
+                }
+              },
             ),
           ),
       ],
@@ -513,8 +525,7 @@ class _RecentReportCard extends StatelessWidget {
 class _BannerSkylinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.12);
+    final paint = Paint()..color = Colors.white.withValues(alpha: 0.12);
     final buildings = [
       [0.0, 0.3, 0.06], [0.07, 0.1, 0.07], [0.15, 0.22, 0.08],
       [0.24, 0.0, 0.10], [0.35, 0.18, 0.07], [0.43, 0.28, 0.06],

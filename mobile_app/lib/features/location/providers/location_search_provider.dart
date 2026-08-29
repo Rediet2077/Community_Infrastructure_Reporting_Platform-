@@ -140,12 +140,10 @@ class LocationSearchProvider extends ChangeNotifier {
         final display = data['display_name'] as String? ?? '';
         if (display.isNotEmpty) {
           final parts = display.split(',');
-          _pickedAddress =
-              parts.take(2).map((s) => s.trim()).join(', ');
+          _pickedAddress = parts.take(2).map((s) => s.trim()).join(', ');
         }
       }
-    } catch (_) {
-    }
+    } catch (_) {}
     _isLoadingAddress = false;
     notifyListeners();
   }

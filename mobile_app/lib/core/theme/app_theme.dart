@@ -22,6 +22,7 @@ class AppColors {
   static const Color textHint      = Color(0xFF9CA3AF);
 
   static const Color divider      = Color(0xFFE5E7EB);
+  static const Color border       = Color(0xFFE5E7EB);
   static const Color secondary    = Color(0xFF388E3C);
 
   static const Color inProgress   = Color(0xFF1976D2);

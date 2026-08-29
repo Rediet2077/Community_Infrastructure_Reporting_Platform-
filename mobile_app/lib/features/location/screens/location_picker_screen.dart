@@ -109,7 +109,8 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.cirp.app',
                 maxZoom: 19,
               ),
@@ -125,6 +126,7 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
               ),
             ],
           ),
+
           Positioned(
             top: MediaQuery.of(context).padding.top + 8,
             left: 12,
@@ -154,6 +156,7 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
               ],
             ),
           ),
+
           Positioned(
             right: 12,
             bottom: 160,
@@ -185,6 +188,7 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
               ],
             ),
           ),
+
           Positioned(
             bottom: 0,
             left: 0,
@@ -197,11 +201,13 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
               confirmLabel: l10n.next,
             ),
           ),
+
           Positioned(
             bottom: 160,
             right: 60,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.75),
                 borderRadius: BorderRadius.circular(4),
@@ -217,6 +223,7 @@ class _LocationPickerBodyState extends State<_LocationPickerBody> {
     );
   }
 }
+
 
 class _SearchBar extends StatelessWidget {
   final TextEditingController controller;
@@ -266,8 +273,8 @@ class _SearchBar extends StatelessWidget {
               onChanged: onChanged,
               decoration: InputDecoration(
                 hintText: hint,
-                hintStyle:
-                    const TextStyle(color: AppColors.textHint, fontSize: 14),
+                hintStyle: const TextStyle(
+                    color: AppColors.textHint, fontSize: 14),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
@@ -298,7 +305,7 @@ class _SearchBar extends StatelessWidget {
           else
             const Padding(
               padding: EdgeInsets.only(right: 12),
-              child: Icon(Icons.search,
+              child: const Icon(Icons.search,
                   color: AppColors.textSecondary, size: 20),
             ),
         ],
@@ -306,6 +313,7 @@ class _SearchBar extends StatelessWidget {
     );
   }
 }
+
 
 class _SearchResultsList extends StatelessWidget {
   final List<SearchResult> results;
@@ -405,6 +413,7 @@ class _SearchResultsList extends StatelessWidget {
   }
 }
 
+
 class _MapButton extends StatelessWidget {
   final IconData icon;
   final String tooltip;
@@ -443,6 +452,7 @@ class _MapButton extends StatelessWidget {
   }
 }
 
+
 class _BottomAddressCard extends StatelessWidget {
   final String address;
   final LatLng latLng;
@@ -465,7 +475,8 @@ class _BottomAddressCard extends StatelessWidget {
           20, 16, 20, MediaQuery.of(context).padding.bottom + 16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -553,6 +564,7 @@ class _BottomAddressCard extends StatelessWidget {
     );
   }
 }
+
 
 class _PinWidget extends StatelessWidget {
   const _PinWidget();

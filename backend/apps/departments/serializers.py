@@ -5,23 +5,21 @@ from .models import Department
 User = get_user_model()
 
 
-class DepartmentAdminSerializer(serializers.ModelSerializer):
-    """Nested serializer for the department admin user."""
-    full_name = serializers.SerializerMethodField()
-
+class DepartmentManagerSerializer(serializers.ModelSerializer):
+    """Nested serializer for clean manager details."""
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'full_name', 'phone_number']
-
-    def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.last_name}".strip()
+        fields = ['id', 'username', 'email', 'first_name', 'last_name']
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
+    # Read-only convenience fields
     admin_email = serializers.ReadOnlyField(source='admin_user.email', default=None)
-    admin_detail = DepartmentAdminSerializer(source='admin_user', read_only=True)
+    manager_detail = DepartmentManagerSerializer(source='manager', read_only=True)
+    
+    # Computed metrics fields for dashboard overview
     total_tasks_count = serializers.SerializerMethodField()
-    active_assets_count = serializers.SerializerMethodField()
+    staff_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Department
@@ -30,22 +28,23 @@ class DepartmentSerializer(serializers.ModelSerializer):
             'name',
             'code',
             'description',
+            'manager',
+            'manager_detail',
             'admin_user',
             'admin_email',
-            'admin_detail',
-            'phone',
-            'email',
-            'address',
-            'is_active',
+            'staff_count',
             'total_tasks_count',
-            'active_assets_count',
             'created_at',
             'updated_at',
         ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
 
     def get_total_tasks_count(self, obj):
-        return obj.tasks.count() if hasattr(obj, 'tasks') else 0
+        if hasattr(obj, 'tasks'):
+            return obj.tasks.count()
+        return 0
 
-    def get_active_assets_count(self, obj):
-        return obj.assets.filter(status='ACTIVE').count() if hasattr(obj, 'assets') else 0
+    def get_staff_count(self, obj):
+        if hasattr(obj, 'staff_members'):
+            return obj.staff_members.count()
+        return 0

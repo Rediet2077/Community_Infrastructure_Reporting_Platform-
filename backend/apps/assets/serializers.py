@@ -1,4 +1,4 @@
-from apps.locations.models import Location
+# from apps.locations.models import Location  # Temporarily disabled for SQLite
 from rest_framework import serializers
 from .models import Asset, AssetType
 
@@ -35,19 +35,19 @@ class AssetRegistrationSerializer(serializers.ModelSerializer):
         asset_type_id = validated_data.pop('asset_type_id')
         asset_type = AssetType.objects.get(id=asset_type_id)
         
-        # 3. Create the Location record (or PostGIS Point)
+        # 3. Temporarily disabled - requires PostGIS
         # from apps.locations.models import Location
-        location = Location.objects.create(
-            latitude=location_data['latitude'],
-            longitude=location_data['longitude'],
-            address=location_data.get('address', ''),
-            landmark=location_data.get('landmark', ''),
-            source=Location.Source.ASSET
-        )
+        # location = Location.objects.create(
+        #     latitude=location_data['latitude'],
+        #     longitude=location_data['longitude'],
+        #     address=location_data.get('address', ''),
+        #     landmark=location_data.get('landmark', ''),
+        #     source=Location.Source.ASSET
+        # )
         
-        # 4. Create and return the Asset
+        # 4. Create and return the Asset (without location for now)
         asset = Asset.objects.create(
-            location=location,
+            location=None,  # Temporarily None until PostGIS is set up
             asset_type=asset_type,
             **validated_data
         )

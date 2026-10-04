@@ -7,10 +7,6 @@ from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 load_dotenv(BASE_DIR / '.env')
-# BASE_DIR = str(Path(__file__).resolve().parent.parent.parent)
-# arr = BASE_DIR.split("\\")
-# BASE_DIR = "/".join(arr)+"/"+".env"
-# load_dotenv(BASE_DIR)
 
 # -----------------------------------------------------------------------------
 # GeoDjango Windows Configuration (GDAL / GEOS)
@@ -57,14 +53,14 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 INSTALLED_APPS = [
-    # GeoDjango Admin & Core
+    # Django Admin & Core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',  # Required for PostGIS spatial fields
+    # 'django.contrib.gis',  # Disabled - requires GDAL
 
     # Third-Party Packages
     'rest_framework',
@@ -74,14 +70,13 @@ INSTALLED_APPS = [
 
     # CIRP Domain Apps
     'apps.users',
-    'apps.reports',
+    'apps.reports',               # Enabled with PostgreSQL
     'apps.categories',
-    'apps.locations',
+    'apps.locations',           # Disabled - uses GIS fields
     'apps.departments',
-    'apps.assets',
-    'apps.collaborations',
+    'apps.assets',              # Disabled - uses GIS fields
+    'apps.disputes',      # Disabled - admin errors
     'apps.notifications',
-    'apps.disputes',
     'apps.tasks',
     'apps.audit',
     'apps.medias',
@@ -95,7 +90,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -119,14 +114,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 # -----------------------------------------------------------------------------
-# Database Configuration (Neon PostGIS)
+# Database Configuration (PostgreSQL)
 # -----------------------------------------------------------------------------
 DATABASES = {
     'default': dj_database_url.config(
         default=os.getenv('DATABASE_URL'),
-        conn_max_age=600,  # Recommended 0 for serverless pooler endpoints
+        conn_max_age=600,
         conn_health_checks=True,
-        engine='django.contrib.gis.db.backends.postgis'
     )
 }
 
@@ -174,33 +168,6 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
     ),
-}
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
-    'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
-}
-# -----------------------------------------------------------------------------
-# REST Framework & JWT
-# -----------------------------------------------------------------------------
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_FILTER_BACKENDS': (
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ),
     'DEFAULT_PAGINATION_CLASS': 'utils.pagination.StandardResultsSetPagination',
     'PAGE_SIZE': 20,
     'EXCEPTION_HANDLER': 'utils.exceptions.custom_exception_handler',
@@ -230,3 +197,16 @@ SIMPLE_JWT = {
 # -----------------------------------------------------------------------------
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+
+# -----------------------------------------------------------------------------
+# AI Service Configuration
+# -----------------------------------------------------------------------------
+AI_SERVICE_URL = os.getenv('AI_SERVICE_URL', 'http://localhost:8001')
+
+# -----------------------------------------------------------------------------
+# Appwrite Configuration
+# -----------------------------------------------------------------------------
+APPWRITE_ENDPOINT = os.getenv('APPWRITE_ENDPOINT', 'https://cloud.appwrite.io/v1')
+APPWRITE_PROJECT_ID = os.getenv('APPWRITE_PROJECT_ID', '')
+APPWRITE_API_KEY = os.getenv('APPWRITE_API_KEY', '')
+APPWRITE_BUCKET_ID = os.getenv('APPWRITE_BUCKET_ID', '')

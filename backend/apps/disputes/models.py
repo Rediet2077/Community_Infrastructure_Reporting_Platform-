@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 
+
 class Dispute(models.Model):
     class Status(models.TextChoices):
         OPEN = 'OPEN', 'Open'
@@ -10,14 +11,51 @@ class Dispute(models.Model):
         REJECTED = 'REJECTED', 'Rejected'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    report = models.ForeignKey('reports.Report', on_delete=models.CASCADE, related_name='disputes')
-    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='disputes_submitted')
+    report = models.ForeignKey(
+        'reports.Report',
+        on_delete=models.CASCADE,
+        related_name='disputes'
+    )
+    submitted_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='disputes_submitted'
+    )
     
     reason = models.TextField()
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.OPEN)
+    status = models.CharField(
+        max_length=20,
+        choices=Status.choices,
+        default=Status.OPEN
+    )
     
-    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='disputes_reviewed')
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='disputes_reviewed'
+    )
     review_note = models.TextField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
     reviewed_at = models.DateTimeField(null=True, blank=True)
+
+
+class DisputeComment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dispute = models.ForeignKey(
+        'disputes.Dispute',
+        on_delete=models.CASCADE,
+        related_name='comments'  # dispute.comments.all()
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='dispute_comments'  # user.dispute_comments.all()
+    )
+    
+    author_detail = models.TextField()
+    comment = models.TextField(null=True, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)

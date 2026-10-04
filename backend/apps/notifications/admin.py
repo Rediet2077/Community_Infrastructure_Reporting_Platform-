@@ -6,12 +6,12 @@ from .models import Notification
 class NotificationAdmin(admin.ModelAdmin):
     list_display = (
         'id',
-        'recipient',
+        'user',
         'title',
-        'notification_type',
+        'type',
         'is_read',
         'created_at',
     )
-    list_filter = ('is_read', 'notification_type', 'created_at')
-    search_fields = ('recipient__username', 'title', 'message')
+    list_filter = ('is_read', 'type', 'created_at')
+    search_fields = ('user__email', 'title', 'message')
     readonly_fields = ('created_at',)

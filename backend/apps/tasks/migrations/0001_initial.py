@@ -11,9 +11,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('assets', '0003_initial'),
-        ('departments', '0002_initial'),
-        ('reports', '0002_initial'),
+        ('departments', '0001_initial'),
+        ('reports', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -37,7 +36,7 @@ class Migration(migrations.Migration):
                 ('completion_notes', models.TextField(blank=True, null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('asset', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tasks', to='assets.asset')),
+                ('asset_code', models.CharField(blank=True, max_length=100, null=True)),
                 ('department', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tasks', to='departments.department')),
                 ('report', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='tasks', to='reports.report')),
             ],

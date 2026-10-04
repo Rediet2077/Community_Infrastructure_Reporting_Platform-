@@ -1,30 +1,35 @@
 import uuid
 from django.db import models
 from django.conf import settings
-from utils.enums import TaskPriority, TaskStatus, TaskExtensionStatus
 
 class Task(models.Model):
+    class Priority(models.TextChoices):
+        LOW = 'LOW', 'Low'
+        MEDIUM = 'MEDIUM', 'Medium'
+        HIGH = 'HIGH', 'High'
+        CRITICAL = 'CRITICAL', 'Critical'
 
-    Status = TaskStatus
+    class Status(models.TextChoices):
+        PENDING = 'PENDING', 'Pending'
+        ACCEPTED = 'ACCEPTED', 'Accepted'
+        IN_PROGRESS = 'IN_PROGRESS', 'In Progress'
+        COMPLETED_PENDING_VERIFICATION = 'COMPLETED_PENDING_VERIFICATION', 'Completed Pending Verification'
+        VERIFIED = 'VERIFIED', 'Verified'
+        REJECTED = 'REJECTED', 'Rejected'
+        REOPENED = 'REOPENED', 'Reopened'
+        CANCELLED = 'CANCELLED', 'Cancelled'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     task_number = models.CharField(max_length=50, unique=True)
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
-
+    
     report = models.ForeignKey('reports.Report', on_delete=models.CASCADE, related_name='tasks')
-    asset = models.ForeignKey('assets.Asset', on_delete=models.CASCADE, related_name='tasks')
+    asset_code = models.CharField(max_length=100, null=True, blank=True)
     department = models.ForeignKey('departments.Department', on_delete=models.CASCADE, related_name='tasks')
-    assigned_contractor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='assigned_tasks'
-    )
-
-    priority = models.CharField(max_length=20, choices=TaskPriority.choices, default=TaskPriority.MEDIUM)
-    status = models.CharField(max_length=40, choices=TaskStatus.choices, default=TaskStatus.PENDING)
+    
+    priority = models.CharField(max_length=20, choices=Priority.choices, default=Priority.MEDIUM)
+    status = models.CharField(max_length=40, choices=Status.choices, default=Status.PENDING)
     progress_percent = models.IntegerField(default=0)
     
     original_deadline = models.DateTimeField()
@@ -43,8 +48,10 @@ class Task(models.Model):
         return self.task_number
 
 class TaskExtension(models.Model):
-
-    Status = TaskExtensionStatus
+    class Status(models.TextChoices):
+        PENDING = 'PENDING', 'Pending'
+        APPROVED = 'APPROVED', 'Approved'
+        REJECTED = 'REJECTED', 'Rejected'
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='extensions')
@@ -55,7 +62,7 @@ class TaskExtension(models.Model):
     reason = models.TextField()
     supporting_url = models.TextField(null=True, blank=True)
     
-    status = models.CharField(max_length=20, choices=TaskExtensionStatus.choices, default=TaskExtensionStatus.PENDING)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
     reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='reviewed_extensions')
     review_note = models.TextField(null=True, blank=True)
     

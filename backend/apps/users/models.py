@@ -46,7 +46,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     profile_image_url = models.TextField(null=True, blank=True)
     
     is_active = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=True)  # Auto-verify in development
     
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

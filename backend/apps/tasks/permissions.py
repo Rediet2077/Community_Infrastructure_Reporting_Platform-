@@ -1,6 +1,7 @@
 from rest_framework import permissions
 
 
+# class IsDepartmentManagerOrAdmin(permissions.BasePermission):
 class IsDepartmentAdmin(permissions.BasePermission):
     """
     Custom permission to allow full access only to Admins or Department Managers.
@@ -17,9 +18,10 @@ class IsDepartmentAdmin(permissions.BasePermission):
 
         # Write permissions are restricted to admin or manager roles
         user_role = getattr(request.user, 'role', None)
-        return request.user.is_staff or user_role in ['SYSTEM_ADMIN', 'DEPARTMENT_ADMIN']
+        return request.user.is_staff or user_role in ['ADMIN', 'DEPARTMENT_MANAGER']
 
 
+# class IsAssignedContractorOrManager(permissions.BasePermission):
 class IsTaskDepartmentAdmin(permissions.BasePermission):
     """
     Object-level permission to allow updates only if the user is the contractor 
